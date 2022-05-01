@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/heeus/wazero/internal/buildoptions"
-	"github.com/heeus/wazero/internal/testing/enginetest"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wazeroir"
+	"github.com/heeus/hwazero/internal/buildoptions"
+	"github.com/heeus/hwazero/internal/testing/enginetest"
+	"github.com/heeus/hwazero/internal/testing/require"
+	"github.com/heeus/hwazero/internal/wasm"
+	"github.com/heeus/hwazero/internal/wazeroir"
 )
 
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.
@@ -270,7 +270,8 @@ func TestInterpreter_NonTrappingFloatToIntConversion(t *testing.T) {
 						source: &wasm.FunctionInstance{Module: &wasm.ModuleInstance{Engine: &moduleEngine{}}},
 						body:   body,
 					}
-					ce.callNativeFunc(testCtx, &wasm.CallContext{}, f)
+					err := ce.callNativeFunc(testCtx, &wasm.CallContext{}, f)
+					require.Nil(t, err)
 
 					if len(tc.expected32bit) > 0 {
 						require.Equal(t, tc.expected32bit[i], int32(uint32(ce.popValue())))
@@ -335,7 +336,8 @@ func TestInterpreter_CallEngine_callNativeFunc_signExtend(t *testing.T) {
 						{kind: wazeroir.OperationKindBr, us: []uint64{math.MaxUint64}},
 					},
 				}
-				ce.callNativeFunc(testCtx, &wasm.CallContext{}, f)
+				err := ce.callNativeFunc(testCtx, &wasm.CallContext{}, f)
+				require.Nil(t, err)
 				require.Equal(t, tc.expected, int32(uint32(ce.popValue())))
 			})
 		}
@@ -387,7 +389,8 @@ func TestInterpreter_CallEngine_callNativeFunc_signExtend(t *testing.T) {
 						{kind: wazeroir.OperationKindBr, us: []uint64{math.MaxUint64}},
 					},
 				}
-				ce.callNativeFunc(testCtx, &wasm.CallContext{}, f)
+				err := ce.callNativeFunc(testCtx, &wasm.CallContext{}, f)
+				require.Nil(t, err)
 				require.Equal(t, tc.expected, int64(ce.popValue()))
 			})
 		}

@@ -1,6 +1,9 @@
 package wasm
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 // Engine is a Store-scoped mechanism to compile functions declared or imported by a module.
 // This is a top-level type implemented by an interpreter or JIT compiler.
@@ -40,6 +43,9 @@ type ModuleEngine interface {
 
 	// Call invokes a function instance f with given parameters.
 	Call(ctx context.Context, m *CallContext, f *FunctionInstance, params ...uint64) (results []uint64, err error)
+
+	// CallEx invokes a function instance f with given parameters, duration and gas limit.
+	CallEx(ctx context.Context, m *CallContext, f *FunctionInstance, duration time.Duration, gaslimit uint64, params ...uint64) (results []uint64, err error)
 
 	// CreateFuncElementInstance creates an ElementInstance whose references are engine-specific function pointers
 	// corresponding to the given `indexes`.

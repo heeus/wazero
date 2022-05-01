@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync/atomic"
+	"time"
 
 	"github.com/heeus/wazero/api"
 	"github.com/heeus/wazero/sys"
@@ -145,6 +146,15 @@ func (f *importedFn) Call(ctx context.Context, params ...uint64) (ret []uint64, 
 	return f.importedFn.Module.Engine.Call(ctx, mod, f.importedFn, params...)
 }
 
+// CallEx implements the same method as documented on api.Function with duration & gaslimit.
+func (f *importedFn) CallEx(ctx context.Context, duration time.Duration, gaslimit uint64, params ...uint64) (ret []uint64, ere error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	mod := f.importingModule
+	return f.importedFn.Module.Engine.CallEx(ctx, mod, f.importedFn, duration, gaslimit, params...)
+}
+
 // ParamTypes implements the same method as documented on api.Function.
 func (f *FunctionInstance) ParamTypes() []api.ValueType {
 	return f.Type.Params
@@ -162,6 +172,15 @@ func (f *FunctionInstance) Call(ctx context.Context, params ...uint64) (ret []ui
 	}
 	mod := f.Module
 	return mod.Engine.Call(ctx, mod.CallCtx, f, params...)
+}
+
+// CallEx implements the same method as documented on api.Function with duration & gaslimit.
+func (f *FunctionInstance) CallEx(ctx context.Context, duration time.Duration, gaslimit uint64, params ...uint64) (ret []uint64, ere error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	mod := f.Module
+	return mod.Engine.CallEx(ctx, mod.CallCtx, f, duration, gaslimit, params...)
 }
 
 // ExportedGlobal implements the same method as documented on api.Module.

@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"runtime"
 	"sync"
+	"time"
 	"unsafe"
 
 	"github.com/heeus/wazero/internal/buildoptions"
@@ -530,6 +531,15 @@ func (me *moduleEngine) CreateFuncElementInstance(indexes []*wasm.Index) *wasm.E
 
 // Call implements the same method as documented on wasm.ModuleEngine.
 func (me *moduleEngine) Call(ctx context.Context, callCtx *wasm.CallContext, f *wasm.FunctionInstance, params ...uint64) (results []uint64, err error) {
+	return me.doCall(ctx, callCtx, f, params...)
+}
+
+// Call implements the same method as documented on wasm.ModuleEngine.
+func (me *moduleEngine) CallEx(ctx context.Context, callCtx *wasm.CallContext, f *wasm.FunctionInstance, duration time.Duration, gaslimit uint64, params ...uint64) (results []uint64, err error) {
+	return me.doCall(ctx, callCtx, f, params...)
+}
+
+func (me *moduleEngine) doCall(ctx context.Context, callCtx *wasm.CallContext, f *wasm.FunctionInstance, params ...uint64) (results []uint64, err error) {
 	// Note: The input parameters are pre-validated, so a compiled function is only absent on close. Updates to
 	// code on close aren't locked, neither is this read.
 	compiled := me.functions[f.Idx]
