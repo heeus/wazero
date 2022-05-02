@@ -252,7 +252,7 @@ func TestInterpreter_Call_WithDuration(t *testing.T) {
 				if nil != err {
 					errstr = err.Error()
 				}
-				require.Equal(errstr, "duration exceeded")
+				require.Equal(errstr, api.ErrDuration.Error())
 			})
 		}
 	})
