@@ -9,15 +9,13 @@ import (
 
 	"github.com/heeus/wazero"
 	"github.com/heeus/wazero/api"
+	"github.com/heeus/wazero/internal/testing/require"
 	"github.com/heeus/wazero/wasi"
-	"github.com/stretchr/testify/require"
 )
 
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func TestFib_Duration(t *testing.T) {
-	require := require.New(t)
-
 	fibWasm, _ := os.ReadFile("testdata/fibonacci.wasm")
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
@@ -39,11 +37,10 @@ func TestFib_Duration(t *testing.T) {
 			}
 		}
 	}
-	require.Equal(err.Error(), api.ErrDuration.Error())
+	require.Equal(t, err.Error(), api.ErrDuration.Error())
 }
 
 func TestFib_GasLimit(t *testing.T) {
-	require := require.New(t)
 
 	fibWasm, _ := os.ReadFile("testdata/fibonacci.wasm")
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
@@ -63,34 +60,34 @@ func TestFib_GasLimit(t *testing.T) {
 		num := uint64(num)
 		if _, err = fibonacci.CallEx(testCtx, 0, 10, num); err != nil {
 			if nil != err {
-				require.Equal(num, uint64(5))
+				require.Equal(t, num, uint64(5))
 				break
 			}
 		}
 	}
 	// Gaslimit 100
-	require.Equal(err.Error(), api.ErrGasLimit.Error())
+	require.Equal(t, err.Error(), api.ErrGasLimit.Error())
 	err = nil
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {
 		num := uint64(num)
 		if _, err = fibonacci.CallEx(testCtx, 0, 300, num); err != nil {
 			if nil != err {
-				require.Equal(num, uint64(10))
+				require.Equal(t, num, uint64(10))
 				break
 			}
 		}
 	}
 	// Gaslimit 1000
-	require.Equal(err.Error(), api.ErrGasLimit.Error())
+	require.Equal(t, err.Error(), api.ErrGasLimit.Error())
 	err = nil
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {
 		num := uint64(num)
 		if _, err = fibonacci.CallEx(testCtx, 0, 5000, num); err != nil {
 			if nil != err {
-				require.Equal(num, uint64(20))
+				require.Equal(t, num, uint64(20))
 				break
 			}
 		}
 	}
-	require.Equal(err.Error(), api.ErrGasLimit.Error())
+	require.Equal(t, err.Error(), api.ErrGasLimit.Error())
 }
