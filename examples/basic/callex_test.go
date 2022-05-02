@@ -50,17 +50,22 @@ func TestFib_GasLimit(t *testing.T) {
 	fibWasm, _ := os.ReadFile("testdata/fib.wasm")
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
-	wm, _ := wasi.InstantiateSnapshotPreview1(testCtx, rtm)
+	var err error
+	wm, err := wasi.InstantiateSnapshotPreview1(testCtx, rtm)
+	require.Nil(t, err)
 	defer wm.Close(testCtx)
 
-	code, _ := rtm.CompileModule(testCtx, fibWasm)
-	module, _ := rtm.InstantiateModule(testCtx, code)
+	code, err := rtm.CompileModule(testCtx, fibWasm)
+	require.Nil(t, err)
+	defer code.Close(testCtx)
+
+	module, err := rtm.InstantiateModule(testCtx, code)
+	require.Nil(t, err)
 	defer module.Close(testCtx)
 
 	fibonacci := module.ExportedFunction("fibonacci")
 
 	// Gaslimit 10
-	var err error
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {
 		num := uint64(num)
 		if _, err = fibonacci.CallEx(testCtx, 0, 10, num); err != nil {
