@@ -3,8 +3,6 @@ module github.com/heeus/wazero
 // This should be the minimum supported Go version per https://go.dev/doc/devel/release (1 version behind latest)
 go 1.17
 
-require github.com/stretchr/testify v1.7.1
-
 require (
 	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

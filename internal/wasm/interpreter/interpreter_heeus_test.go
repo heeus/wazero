@@ -8,13 +8,12 @@ import (
 	"time"
 
 	"github.com/heeus/wazero/api"
+	"github.com/heeus/wazero/internal/testing/require"
 	"github.com/heeus/wazero/internal/wasm"
 	"github.com/heeus/wazero/internal/wazeroir"
-	"github.com/stretchr/testify/require"
 )
 
 func TestInterpreter_Call_WithContextTimeout(t *testing.T) {
-	require := require.New(t)
 	translateToIROperationKind := func(op wasm.Opcode) (kind wazeroir.OperationKind) {
 		switch op {
 		case wasm.OpcodeI32Extend8S:
@@ -80,14 +79,13 @@ func TestInterpreter_Call_WithContextTimeout(t *testing.T) {
 				if nil != err {
 					errstr = err.Error()
 				}
-				require.Equal(errstr, "context deadline exceeded")
+				require.Equal(t, errstr, "context deadline exceeded")
 			})
 		}
 	})
 }
 
 func TestInterpreter_Call_WithGasLimit(t *testing.T) {
-	require := require.New(t)
 	translateToIROperationKind := func(op wasm.Opcode) (kind wazeroir.OperationKind) {
 		switch op {
 		case wasm.OpcodeI32Extend8S:
@@ -150,17 +148,17 @@ func TestInterpreter_Call_WithGasLimit(t *testing.T) {
 				if nil != err {
 					errstr = err.Error()
 				}
-				require.Equal(errstr, api.ErrGasLimit.Error())
+				require.Equal(t, errstr, api.ErrGasLimit.Error())
 
 				//Limit should not work
 				ce = ce.withGasLimit(3)
 				err = ce.callNativeFunc(testCtx, emptytcx, f)
-				require.Nil(err)
+				require.Nil(t, err)
 
 				//Limit should not work
 				ce = ce.withGasLimit(5)
 				err = ce.callNativeFunc(testCtx, emptytcx, f)
-				require.Nil(err)
+				require.Nil(t, err)
 
 				// Limit should work
 				ce = ce.withGasLimit(2)
@@ -168,7 +166,7 @@ func TestInterpreter_Call_WithGasLimit(t *testing.T) {
 				if nil != err {
 					errstr = err.Error()
 				}
-				require.Equal(errstr, api.ErrGasLimit.Error())
+				require.Equal(t, errstr, api.ErrGasLimit.Error())
 
 			})
 		}
@@ -176,7 +174,6 @@ func TestInterpreter_Call_WithGasLimit(t *testing.T) {
 }
 
 func TestInterpreter_Call_WithDuration(t *testing.T) {
-	require := require.New(t)
 	translateToIROperationKind := func(op wasm.Opcode) (kind wazeroir.OperationKind) {
 		switch op {
 		case wasm.OpcodeI32Extend8S:
@@ -244,7 +241,7 @@ func TestInterpreter_Call_WithDuration(t *testing.T) {
 					}
 					if nil != err {
 						// On 11th iteration mock time must exceeed test Duration 10 Milliseconds
-						require.Equal(i, 11)
+						require.Equal(t, i, 11)
 						break
 					}
 				}
@@ -252,7 +249,7 @@ func TestInterpreter_Call_WithDuration(t *testing.T) {
 				if nil != err {
 					errstr = err.Error()
 				}
-				require.Equal(errstr, api.ErrDuration.Error())
+				require.Equal(t, errstr, api.ErrDuration.Error())
 			})
 		}
 	})
