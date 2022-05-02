@@ -3,7 +3,6 @@ package add
 import (
 	"context"
 	_ "embed"
-	"os"
 	"testing"
 	"time"
 
@@ -14,10 +13,12 @@ import (
 )
 
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
+var (
+	//go:embed testdata/fib.wasm
+	fib []byte
+)
 
 func TestFib_Duration(t *testing.T) {
-	fibWasm, _ := os.ReadFile("testdata/fib.wasm")
-	require.NotNil(t, fibWasm)
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(t, rtm)
 
@@ -26,11 +27,7 @@ func TestFib_Duration(t *testing.T) {
 	require.NoError(t, err)
 	defer wm.Close(testCtx)
 
-	code, err := rtm.CompileModule(testCtx, fibWasm)
-	require.NoError(t, err)
-	defer code.Close(testCtx)
-
-	module, err := rtm.InstantiateModule(testCtx, code)
+	module, err := rtm.InstantiateModuleFromCode(testCtx, fib)
 	require.NoError(t, err)
 	defer module.Close(testCtx)
 
@@ -49,8 +46,6 @@ func TestFib_Duration(t *testing.T) {
 
 func TestFib_GasLimit(t *testing.T) {
 
-	fibWasm, _ := os.ReadFile("testdata/fib.wasm")
-	require.NotNil(t, fibWasm)
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(t, rtm)
 
@@ -59,11 +54,7 @@ func TestFib_GasLimit(t *testing.T) {
 	require.NoError(t, err)
 	defer wm.Close(testCtx)
 
-	code, err := rtm.CompileModule(testCtx, fibWasm)
-	require.NoError(t, err)
-	defer code.Close(testCtx)
-
-	module, err := rtm.InstantiateModule(testCtx, code)
+	module, err := rtm.InstantiateModuleFromCode(testCtx, fib)
 	require.NoError(t, err)
 	defer module.Close(testCtx)
 
