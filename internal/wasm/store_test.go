@@ -7,6 +7,7 @@ import (
 	"math"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/heeus/wazero/api"
 	"github.com/heeus/wazero/internal/leb128"
@@ -411,6 +412,11 @@ func (e *mockModuleEngine) Call(ctx context.Context, callCtx *CallContext, f *Fu
 		return
 	}
 	return
+}
+
+// CallEx implements the same method as documented on wasm.ModuleEngine.
+func (e *mockModuleEngine) CallEx(ctx context.Context, m *CallContext, f *FunctionInstance, duration time.Duration, gaslimit uint64, params ...uint64) (results []uint64, err error) {
+	return e.Call(ctx, m, f, params...)
 }
 
 // Close implements the same method as documented on wasm.ModuleEngine.

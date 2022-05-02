@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/heeus/hwazero/api"
-	"github.com/heeus/hwazero/internal/wasm"
-	"github.com/heeus/hwazero/internal/wazeroir"
+	"github.com/heeus/wazero/api"
+	"github.com/heeus/wazero/internal/wasm"
+	"github.com/heeus/wazero/internal/wazeroir"
 	"github.com/stretchr/testify/require"
 )
 
@@ -155,7 +155,7 @@ func TestInterpreter_Call_WithGasLimit(t *testing.T) {
 				//Limit should not work
 				ce = ce.withGasLimit(3)
 				err = ce.callNativeFunc(testCtx, emptytcx, f)
-				require.Nil( err)
+				require.Nil(err)
 
 				//Limit should not work
 				ce = ce.withGasLimit(5)
