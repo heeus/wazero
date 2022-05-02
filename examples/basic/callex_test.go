@@ -47,7 +47,7 @@ func TestFib_Duration(t *testing.T) {
 
 func TestFib_GasLimit(t *testing.T) {
 
-	fibWasm, _ := os.ReadFile("testdata/fibonacci.wasm")
+	fibWasm, _ := os.ReadFile("testdata/fib.wasm")
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
 	wm, _ := wasi.InstantiateSnapshotPreview1(testCtx, rtm)

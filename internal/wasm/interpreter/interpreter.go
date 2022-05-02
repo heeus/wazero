@@ -99,6 +99,7 @@ type callEngine struct {
 }
 
 func (ce *callEngine) withGasLimit(gaslimit uint64) *callEngine {
+	ce.opgas = 0
 	ce.gaslimit = gaslimit * gasUnity
 	return ce
 }
@@ -722,11 +723,11 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	for frame.pc < bodyLen {
 		opcounter--
 		if opcounter == 0 {
+			opcounter = origCheckStep
 			if opdur > 0 && timefunc().Sub(startTime) > opdur {
 				return api.ErrDuration
 			}
 			if nil != ctx {
-				opcounter = origCheckStep
 				if nil != ctx {
 					err = ctx.Err()
 					if nil != err {
