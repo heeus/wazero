@@ -92,13 +92,13 @@ type callEngine struct {
 	funcCtxErrStep func() uint64
 	funcGetTime    func() time.Time
 	opgas          uint64
+	opinnercount   uint64
 	gaslimit       uint64
 	duration       time.Duration
 	startTime      time.Time
 }
 
 func (ce *callEngine) withGasLimit(gaslimit uint64) *callEngine {
-	ce.opgas = 0
 	ce.gaslimit = gaslimit * gasUnity
 	return ce
 }
@@ -653,6 +653,7 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 		for _, param := range params {
 			ce.pushValue(param)
 		}
+		ce.opinnercount = ce.getCtxCheckStep()
 		err = ce.callNativeFunc(ctx, m, compiled)
 		if nil != err {
 			return
@@ -714,11 +715,10 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	callopgas := ce.opgas
 	callgaslimit := ce.gaslimit
 	origCheckStep := ce.getCtxCheckStep()
-	opcounter := origCheckStep
+	opcounter := ce.opinnercount
 	opdur := ce.duration
 	startTime := ce.startTime
 	timefunc := ce.getCtxTime
-
 	for frame.pc < bodyLen {
 		opcounter--
 		if opcounter == 0 {
@@ -779,22 +779,25 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 		case wazeroir.OperationKindCall:
 			{
 				ce.opgas = callopgas
+				ce.opinnercount = opcounter
 				f := functions[op.us[0]]
 				if f.hostFn != nil {
 					ce.callGoFuncWithStack(ctx, callCtx, f)
 					callopgas = callopgas + gasUnity
 				} else if listener != nil {
 					ctx, err = ce.callNativeFuncWithListener(ctx, callCtx, f, listener)
-					callopgas = ce.opgas
 					if nil != err {
 						return err
 					}
+					callopgas = ce.opgas
+					opcounter = ce.opinnercount
 				} else {
 					err = ce.callNativeFunc(ctx, callCtx, f)
-					callopgas = ce.opgas
 					if nil != err {
 						return err
 					}
+					callopgas = ce.opgas
+					opcounter = ce.opinnercount
 				}
 				frame.pc++
 			}
@@ -817,16 +820,18 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					ce.callGoFuncWithStack(ctx, callCtx, tf)
 				} else if listener != nil {
 					ctx, err = ce.callNativeFuncWithListener(ctx, callCtx, f, listener)
-					callopgas = ce.opgas
 					if nil != err {
 						return
 					}
+					callopgas = ce.opgas
+					opcounter = ce.opinnercount
 				} else {
 					err = ce.callNativeFunc(ctx, callCtx, tf)
-					callopgas = ce.opgas
 					if nil != err {
 						return
 					}
+					callopgas = ce.opgas
+					opcounter = ce.opinnercount
 				}
 				frame.pc++
 				callopgas = callopgas + gasUnity
@@ -1986,6 +1991,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 		return api.ErrGasLimit
 	}
 	ce.opgas = callopgas
+	ce.opinnercount = opcounter
 	ce.popFrame()
 	return nil
 }

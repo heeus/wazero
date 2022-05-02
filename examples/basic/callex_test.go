@@ -16,7 +16,7 @@ import (
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func TestFib_Duration(t *testing.T) {
-	fibWasm, _ := os.ReadFile("testdata/fibonacci.wasm")
+	fibWasm, _ := os.ReadFile("testdata/fib.wasm")
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
 	var err error
