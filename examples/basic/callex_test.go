@@ -19,16 +19,21 @@ func TestFib_Duration(t *testing.T) {
 	fibWasm, _ := os.ReadFile("testdata/fibonacci.wasm")
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
-	wm, _ := wasi.InstantiateSnapshotPreview1(testCtx, rtm)
+	var err error
+	wm, err := wasi.InstantiateSnapshotPreview1(testCtx, rtm)
+	require.Nil(t, err)
 	defer wm.Close(testCtx)
 
-	code, _ := rtm.CompileModule(testCtx, fibWasm)
-	module, _ := rtm.InstantiateModule(testCtx, code)
+	code, err := rtm.CompileModule(testCtx, fibWasm)
+	require.Nil(t, err)
+	defer code.Close(testCtx)
+
+	module, err := rtm.InstantiateModule(testCtx, code)
+	require.Nil(t, err)
 	defer module.Close(testCtx)
 
 	fibonacci := module.ExportedFunction("fibonacci")
 
-	var err error
 	for i := 0; i < 100; i++ {
 		num := uint64(i)
 		if _, err = fibonacci.CallEx(testCtx, 10*time.Millisecond, 0, num); err != nil {
