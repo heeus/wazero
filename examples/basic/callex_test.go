@@ -17,6 +17,7 @@ var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func TestFib_Duration(t *testing.T) {
 	fibWasm, _ := os.ReadFile("testdata/fib.wasm")
+	require.NotNil(t, fibWasm)
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(t, rtm)
 
@@ -49,6 +50,7 @@ func TestFib_Duration(t *testing.T) {
 func TestFib_GasLimit(t *testing.T) {
 
 	fibWasm, _ := os.ReadFile("testdata/fib.wasm")
+	require.NotNil(t, fibWasm)
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(t, rtm)
 
