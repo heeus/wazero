@@ -22,15 +22,15 @@ func TestFib_Duration(t *testing.T) {
 
 	var err error
 	wm, err := wasi.InstantiateSnapshotPreview1(testCtx, rtm)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	defer wm.Close(testCtx)
 
 	code, err := rtm.CompileModule(testCtx, fibWasm)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	defer code.Close(testCtx)
 
 	module, err := rtm.InstantiateModule(testCtx, code)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	defer module.Close(testCtx)
 
 	fibonacci := module.ExportedFunction("fibonacci")
@@ -54,15 +54,15 @@ func TestFib_GasLimit(t *testing.T) {
 
 	var err error
 	wm, err := wasi.InstantiateSnapshotPreview1(testCtx, rtm)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	defer wm.Close(testCtx)
 
 	code, err := rtm.CompileModule(testCtx, fibWasm)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	defer code.Close(testCtx)
 
 	module, err := rtm.InstantiateModule(testCtx, code)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	defer module.Close(testCtx)
 
 	fibonacci := module.ExportedFunction("fibonacci")
