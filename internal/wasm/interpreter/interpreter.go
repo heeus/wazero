@@ -1988,11 +1988,6 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 			callopgas = callopgas + gasUnity
 		}
 	}
-	/*
-		if callgaslimit > 0 && callopgas > callgaslimit {
-			return api.ErrGasLimit
-		}
-	*/
 	ce.opgas = callopgas
 	ce.opcounter = opcounter
 	ce.popFrame()
