@@ -1,5 +1,5 @@
 name: Test
-on: [push, pull_request]
+on: [push]
 
 env:  # Update this prior to requiring a higher minor version in go.mod
   GO_VERSION: "1.17"  # 1.xx == latest patch of 1.xx
