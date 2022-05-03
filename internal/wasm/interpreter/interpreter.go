@@ -92,7 +92,7 @@ type callEngine struct {
 	funcCtxErrStep func() uint64
 	funcGetTime    func() time.Time
 	opgas          uint64
-	opinnercount   uint64
+	opcounter      uint64
 	gaslimit       uint64
 	duration       time.Duration
 	startTime      time.Time
@@ -654,7 +654,7 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 		for _, param := range params {
 			ce.pushValue(param)
 		}
-		ce.opinnercount = ce.getCtxCheckStep()
+		ce.opcounter = ce.getCtxCheckStep()
 		err = ce.callNativeFunc(ctx, m, compiled)
 		if nil != err {
 			return
@@ -715,15 +715,15 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 
 	callopgas := ce.opgas
 	callgaslimit := ce.gaslimit
-	origCheckStep := ce.getCtxCheckStep()
-	opcounter := ce.opinnercount
+	limitCheckStep := ce.getCtxCheckStep()
+	opcounter := ce.opcounter
 	opdur := ce.duration
 	startTime := ce.startTime
 	timefunc := ce.getCtxTime
 	for frame.pc < bodyLen {
 		opcounter--
 		if opcounter == 0 {
-			opcounter = origCheckStep
+			opcounter = limitCheckStep
 			if opdur > 0 && timefunc().Sub(startTime) > opdur {
 				return api.ErrDuration
 			}
@@ -736,7 +736,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				}
 			}
 			if callgaslimit > 0 {
-				if callopgas > callgaslimit {
+				if callopgas >= callgaslimit {
 					return api.ErrGasLimit
 				}
 			}
@@ -780,7 +780,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 		case wazeroir.OperationKindCall:
 			{
 				ce.opgas = callopgas
-				ce.opinnercount = opcounter
+				ce.opcounter = opcounter
 				f := functions[op.us[0]]
 				if f.hostFn != nil {
 					ce.callGoFuncWithStack(ctx, callCtx, f)
@@ -791,14 +791,14 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 						return err
 					}
 					callopgas = ce.opgas
-					opcounter = ce.opinnercount
+					opcounter = ce.opcounter
 				} else {
 					err = ce.callNativeFunc(ctx, callCtx, f)
 					if nil != err {
 						return err
 					}
 					callopgas = ce.opgas
-					opcounter = ce.opinnercount
+					opcounter = ce.opcounter
 				}
 				frame.pc++
 			}
@@ -825,14 +825,14 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 						return
 					}
 					callopgas = ce.opgas
-					opcounter = ce.opinnercount
+					opcounter = ce.opcounter
 				} else {
 					err = ce.callNativeFunc(ctx, callCtx, tf)
 					if nil != err {
 						return
 					}
 					callopgas = ce.opgas
-					opcounter = ce.opinnercount
+					opcounter = ce.opcounter
 				}
 				frame.pc++
 				callopgas = callopgas + gasUnity
@@ -1988,11 +1988,13 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 			callopgas = callopgas + gasUnity
 		}
 	}
-	if callgaslimit > 0 && callopgas > callgaslimit {
-		return api.ErrGasLimit
-	}
+	/*
+		if callgaslimit > 0 && callopgas > callgaslimit {
+			return api.ErrGasLimit
+		}
+	*/
 	ce.opgas = callopgas
-	ce.opinnercount = opcounter
+	ce.opcounter = opcounter
 	ce.popFrame()
 	return nil
 }
