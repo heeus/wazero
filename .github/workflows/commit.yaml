@@ -75,8 +75,6 @@ jobs:
         go-version:
         - "1.17"  # == ${{ env.GO_VERSION }} because matrix cannot expand env variables
         - "1.18"
-        arch:
-        - "amd64"
 
     steps:
       - uses: actions/setup-go@v3
