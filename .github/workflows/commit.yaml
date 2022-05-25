@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main]    
+    branches: [main, gas-limit]    
 
   
 env:  # Update this prior to requiring a higher minor version in go.mod
