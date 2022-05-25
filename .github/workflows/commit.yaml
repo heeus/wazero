@@ -67,7 +67,7 @@ jobs:
       - run: make test
 
   test_scratch:
-    name: ${{ matrix.arch }}, Linux (scratch), Go-${{ matrix.go-version }}
+    name: ${{ matrix.arch }}, Go-${{ matrix.go-version }}
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false  # don't fail fast as sometimes failures are arch/OS specific
