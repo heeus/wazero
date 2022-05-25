@@ -9,7 +9,6 @@ import (
 	"github.com/heeus/wazero"
 	"github.com/heeus/wazero/api"
 	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/wasi"
 )
 
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
@@ -23,9 +22,6 @@ func TestFib_Duration(t *testing.T) {
 	require.NotNil(t, rtm)
 
 	var err error
-	wm, err := wasi.InstantiateSnapshotPreview1(testCtx, rtm)
-	require.NoError(t, err)
-	defer wm.Close(testCtx)
 
 	module, err := rtm.InstantiateModuleFromCode(testCtx, fib)
 	require.NoError(t, err)
@@ -50,9 +46,6 @@ func TestFib_GasLimit(t *testing.T) {
 	require.NotNil(t, rtm)
 
 	var err error
-	wm, err := wasi.InstantiateSnapshotPreview1(testCtx, rtm)
-	require.NoError(t, err)
-	defer wm.Close(testCtx)
 
 	module, err := rtm.InstantiateModuleFromCode(testCtx, fib)
 	require.NoError(t, err)
