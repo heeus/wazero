@@ -695,7 +695,7 @@ func (ce *callEngine) reset() {
 
 	ce.opcounter = 0
 	ce = ce.WithDuration(ce.duration)
-	ce = ce.WithGasLimit(ce.gaslimit)
+	ce.WithGasLimit(ce.gaslimit)
 }
 
 func (ce *callEngine) callGoFunc(ctx context.Context, callCtx *wasm.CallContext, f *function, params []uint64) (results []uint64) {
