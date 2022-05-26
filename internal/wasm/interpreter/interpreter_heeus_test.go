@@ -143,7 +143,7 @@ func TestInterpreter_Call_WithGasLimit(t *testing.T) {
 				emptytcx := &wasm.CallContext{}
 
 				// Limit should work
-				ce = ce.withGasLimit(2)
+				ce = ce.WithGasLimit(2)
 				err = ce.callNativeFunc(testCtx, emptytcx, f)
 				if nil != err {
 					errstr = err.Error()
@@ -151,17 +151,17 @@ func TestInterpreter_Call_WithGasLimit(t *testing.T) {
 				require.Equal(t, errstr, api.ErrGasLimit.Error())
 
 				//Limit should not work
-				ce = ce.withGasLimit(3)
+				ce = ce.WithGasLimit(3)
 				err = ce.callNativeFunc(testCtx, emptytcx, f)
 				require.Nil(t, err)
 
 				//Limit should not work
-				ce = ce.withGasLimit(5)
+				ce = ce.WithGasLimit(5)
 				err = ce.callNativeFunc(testCtx, emptytcx, f)
 				require.Nil(t, err)
 
 				// Limit should work
-				ce = ce.withGasLimit(2)
+				ce = ce.WithGasLimit(2)
 				err = ce.callNativeFunc(testCtx, emptytcx, f)
 				if nil != err {
 					errstr = err.Error()

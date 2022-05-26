@@ -63,7 +63,7 @@ func TestFib_GasLimit(t *testing.T) {
 			}
 		}
 	}
-	// Gaslimit 100
+	// Gaslimit 300
 	require.Equal(t, err.Error(), api.ErrGasLimit.Error())
 	err = nil
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {

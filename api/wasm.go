@@ -6,7 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"time"
 )
+
+var ErrGasLimit = errors.New("gas limit exceeded")
+var ErrDuration = errors.New("duration exceeded")
 
 // ValueType describes a numeric type used in Web Assembly 1.0 (20191205). For example, Function parameters and results are
 // only definable as a value type.
@@ -41,12 +45,6 @@ const (
 	// ValueTypeF64 is a 32-bit floating point number.
 	ValueTypeF64 ValueType = 0x7c
 )
-
-const GasLimitKey = "hwazero_gaslimit"
-
-// ErrGasLimit - erro occurs when gas limit exceeded
-var ErrGasLimit = errors.New("gas limit exceeded")
-var ErrDuration = errors.New("duration exceeded")
 
 // ValueTypeName returns the type name of the given ValueType as a string.
 // These type names match the names used in the WebAssembly text format.
@@ -134,7 +132,7 @@ type Function interface {
 	// sys.ExitError. Interpreting this is specific to the module. For example, some "main" functions always call a
 	// function that exits.
 	Call(ctx context.Context, params ...uint64) ([]uint64, error)
-	CallEx(ctx context.Context, ce *CallEngine, params ...uint64) ([]uint64, error)
+	CallEx(ctx context.Context, duration time.Duration, gaslimit uint64, params ...uint64) ([]uint64, error)
 }
 
 // Global is a WebAssembly 1.0 (20191205) global exported from an instantiated module (wazero.Runtime InstantiateModule).

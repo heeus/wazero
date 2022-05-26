@@ -21,6 +21,7 @@ import (
 )
 
 const (
+	GasLimitKey                = "hwazero_gaslimit"
 	errContextCheckStep uint64 = 100
 	gasUnity            uint64 = 10000
 )
@@ -77,11 +78,12 @@ type moduleEngine struct {
 	// parentEngine holds *engine from which this module engine is created from.
 	parentEngine          *engine
 	importedFunctionCount uint32
+	callEng               *callEngine
 }
 
-// CallEngine holds context per moduleEngine.Call, and shared across all the
+// callEngine holds context per moduleEngine.Call, and shared across all the
 // function calls originating from the same moduleEngine.Call execution.
-type CallEngine struct {
+type callEngine struct {
 	// stack contains the operands.
 	// Note that all the values are represented as uint64.
 	stack []uint64
@@ -99,42 +101,42 @@ type CallEngine struct {
 }
 
 // WithGasLimit sets gas limit
-func (ce *CallEngine) WithGasLimit(gaslimit uint64) *CallEngine {
+func (ce *callEngine) WithGasLimit(gaslimit uint64) *callEngine {
 	ce.opgas = 0
-	ce.gaslimit = gaslimit * gasUnity
+	ce.gaslimit = gaslimit
 	return ce
 }
 
 // WithDuration sets duration limit
-func (ce *CallEngine) WithDuration(duration time.Duration) *CallEngine {
+func (ce *callEngine) WithDuration(duration time.Duration) *callEngine {
 	ce.duration = duration
 	ce.startTime = ce.getCtxTime()
 	return ce
 }
 
-func (ce *CallEngine) getCtxCheckStep() uint64 {
+func (ce *callEngine) getCtxCheckStep() uint64 {
 	if nil != ce.funcCtxErrStep {
 		return ce.funcCtxErrStep()
 	}
 	return errContextCheckStep
 }
 
-func (ce *CallEngine) getCtxTime() time.Time {
+func (ce *callEngine) getCtxTime() time.Time {
 	if nil != ce.funcGetTime {
 		return ce.funcGetTime()
 	}
 	return time.Now()
 }
 
-func (me *moduleEngine) newCallEngine() *CallEngine {
-	return &CallEngine{}
+func newcallEngine() *callEngine {
+	return &callEngine{}
 }
 
-func (ce *CallEngine) pushValue(v uint64) {
+func (ce *callEngine) pushValue(v uint64) {
 	ce.stack = append(ce.stack, v)
 }
 
-func (ce *CallEngine) popValue() (v uint64) {
+func (ce *callEngine) popValue() (v uint64) {
 	// No need to check stack bound
 	// as we can assume that all the operations
 	// are valid thanks to validateFunction
@@ -148,7 +150,7 @@ func (ce *CallEngine) popValue() (v uint64) {
 }
 
 // peekValues peeks api.ValueType values from the stack and returns them in reverse order.
-func (ce *CallEngine) peekValues(count int) []uint64 {
+func (ce *callEngine) peekValues(count int) []uint64 {
 	if count == 0 {
 		return nil
 	}
@@ -161,7 +163,7 @@ func (ce *CallEngine) peekValues(count int) []uint64 {
 	return values
 }
 
-func (ce *CallEngine) drop(r *wazeroir.InclusiveRange) {
+func (ce *callEngine) drop(r *wazeroir.InclusiveRange) {
 	// No need to check stack bound
 	// as we can assume that all the operations
 	// are valid thanks to validateFunction
@@ -179,14 +181,14 @@ func (ce *CallEngine) drop(r *wazeroir.InclusiveRange) {
 	}
 }
 
-func (ce *CallEngine) pushFrame(frame *callFrame) {
+func (ce *callEngine) pushFrame(frame *callFrame) {
 	if callStackCeiling <= len(ce.frames) {
 		panic(wasmruntime.ErrRuntimeCallStackOverflow)
 	}
 	ce.frames = append(ce.frames, frame)
 }
 
-func (ce *CallEngine) popFrame() (frame *callFrame) {
+func (ce *callEngine) popFrame() (frame *callFrame) {
 	// No need to check stack bound as we can assume that all the operations are valid thanks to validateFunction at
 	// module validation phase and wazeroir translation before compilation.
 	oneLess := len(ce.frames) - 1
@@ -609,7 +611,7 @@ func (me *moduleEngine) CreateFuncElementInstance(indexes []*wasm.Index) *wasm.E
 }
 
 // Call implements the same method as documented on wasm.ModuleEngine.
-func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, ce *CallEngine, params ...uint64) (results []uint64, err error) {
+func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, params ...uint64) (results []uint64, err error) {
 	// Note: The input parameters are pre-validated, so a compiled function is only absent on close. Updates to
 	// code on close aren't locked, neither is this read.
 	compiled := me.functions[f.Idx]
@@ -625,7 +627,7 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 	if len(paramSignature) != paramCount {
 		return nil, fmt.Errorf("expected %d params, but passed %d", len(paramSignature), paramCount)
 	}
-
+	ce := me.callEng
 	ce.reset()
 	defer func() {
 		// If the module closed during the call, and the call didn't err for another reason, set an ExitError.
@@ -671,25 +673,32 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 
 // Call implements the same method as documented on wasm.ModuleEngine.
 func (me *moduleEngine) Call(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, params ...uint64) (results []uint64, err error) {
-	ce := me.newCallEngine()
-	return me.doCall(ctx, m, f, ce, params...)
+	me.callEng = newcallEngine()
+	return me.doCall(ctx, m, f, params...)
 }
 
 // CallEx invokes a function instance f with pre-created callEngine parameter.
-func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, ce *CallEngine, params ...uint64) (results []uint64, err error) {
-	return me.doCall(ctx, m, f, ce, params...)
+func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, duration time.Duration, gaslimit uint64, params ...uint64) (results []uint64, err error) {
+	if me.callEng == nil {
+		ce := newcallEngine()
+		me.callEng = ce
+	}
+	me.callEng = me.callEng.WithDuration(duration)
+	me.callEng = me.callEng.WithGasLimit(gaslimit)
+	return me.doCall(ctx, m, f, params...)
 }
 
-func (ce *CallEngine) reset() {
+func (ce *callEngine) reset() {
 
 	ce.stack = ce.stack[:0]
 	ce.frames = ce.frames[:0]
 
+	ce.opcounter = 0
 	ce = ce.WithDuration(ce.duration)
 	ce = ce.WithGasLimit(ce.gaslimit)
 }
 
-func (ce *CallEngine) callGoFunc(ctx context.Context, callCtx *wasm.CallContext, f *function, params []uint64) (results []uint64) {
+func (ce *callEngine) callGoFunc(ctx context.Context, callCtx *wasm.CallContext, f *function, params []uint64) (results []uint64) {
 	if len(ce.frames) > 0 {
 		// Use the caller's memory, which might be different from the defining module on an imported function.
 		callCtx = callCtx.WithMemory(ce.frames[len(ce.frames)-1].f.source.Module.Memory)
@@ -708,7 +717,7 @@ func (ce *CallEngine) callGoFunc(ctx context.Context, callCtx *wasm.CallContext,
 	return
 }
 
-func (ce *CallEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallContext, f *function) (err error) {
+func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallContext, f *function) (err error) {
 	frame := &callFrame{f: f}
 	moduleInst := f.source.Module
 	memoryInst := moduleInst.Memory
@@ -723,7 +732,7 @@ func (ce *CallEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	bodyLen := uint64(len(frame.f.body))
 
 	callopgas := ce.opgas
-	callgaslimit := ce.gaslimit
+	callgaslimit := ce.gaslimit * gasUnity
 	limitCheckStep := ce.getCtxCheckStep()
 	opcounter := ce.opcounter
 	opdur := ce.duration
@@ -2003,7 +2012,7 @@ func (ce *CallEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	return nil
 }
 
-func (ce *CallEngine) callNativeFuncWithListener(ctx context.Context, callCtx *wasm.CallContext, f *function, fnl experimental.FunctionListener) (context.Context, error) {
+func (ce *callEngine) callNativeFuncWithListener(ctx context.Context, callCtx *wasm.CallContext, f *function, fnl experimental.FunctionListener) (context.Context, error) {
 	ctx = fnl.Before(ctx, ce.peekValues(len(f.source.Type.Params)))
 	err := ce.callNativeFunc(ctx, callCtx, f)
 	// TODO: This doesn't get the error due to use of panic to propagate them.
@@ -2013,7 +2022,7 @@ func (ce *CallEngine) callNativeFuncWithListener(ctx context.Context, callCtx *w
 
 // popMemoryOffset takes a memory offset off the stack for use in load and store instructions.
 // As the top of stack value is 64-bit, this ensures it is in range before returning it.
-func (ce *CallEngine) popMemoryOffset(op *interpreterOp) uint32 {
+func (ce *callEngine) popMemoryOffset(op *interpreterOp) uint32 {
 	// TODO: Document what 'us' is and why we expect to look at value 1.
 	offset := op.us[1] + ce.popValue()
 	if offset > math.MaxUint32 {
@@ -2022,7 +2031,7 @@ func (ce *CallEngine) popMemoryOffset(op *interpreterOp) uint32 {
 	return uint32(offset)
 }
 
-func (ce *CallEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function) {
+func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function) {
 	params := wasm.PopGoFuncParams(f.source, ce.popValue)
 	results := ce.callGoFunc(ctx, callCtx, f, params)
 	for _, v := range results {
