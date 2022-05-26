@@ -689,22 +689,8 @@ func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm
 }
 
 func (ce *callEngine) reset() {
-	/*
-		ce.stack = ce.stack[:0]
-		ce.frames = ce.frames[:0]
-	*/
-	ls := len(ce.stack)
-	for k := 0; k < ls; k++ {
-		ce.stack[k] = 0
-	}
-	ce.stack = append(ce.stack[:0], ce.stack[ls:]...)
-
-	fs := len(ce.frames)
-	for f := 0; f < fs; f++ {
-		ce.frames[f] = nil
-	}
-	ce.frames = append(ce.frames[:0], ce.frames[fs:]...)
-
+	ce.stack = ce.stack[:0]
+	ce.frames = ce.frames[:0]
 	ce.opcounter = 0
 }
 
