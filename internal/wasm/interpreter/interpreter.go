@@ -692,10 +692,7 @@ func (ce *callEngine) reset() {
 
 	ce.stack = ce.stack[:0]
 	ce.frames = ce.frames[:0]
-
 	ce.opcounter = 0
-	ce = ce.WithDuration(ce.duration)
-	ce.WithGasLimit(ce.gaslimit)
 }
 
 func (ce *callEngine) callGoFunc(ctx context.Context, callCtx *wasm.CallContext, f *function, params []uint64) (results []uint64) {
