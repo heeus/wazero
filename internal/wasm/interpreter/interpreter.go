@@ -680,8 +680,7 @@ func (me *moduleEngine) Call(ctx context.Context, m *wasm.CallContext, f *wasm.F
 // CallEx invokes a function instance f with pre-created callEngine parameter.
 func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, duration time.Duration, gaslimit uint64, params ...uint64) (results []uint64, err error) {
 	if me.callEng == nil {
-		ce := newcallEngine()
-		me.callEng = ce
+		me.callEng = newcallEngine()
 	}
 	me.callEng = me.callEng.WithDuration(duration)
 	me.callEng = me.callEng.WithGasLimit(gaslimit)
