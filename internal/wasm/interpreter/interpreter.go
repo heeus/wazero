@@ -89,7 +89,7 @@ type callEngine struct {
 	stack []uint64
 
 	// frames are the function call stack.
-	frames []*callFrame
+	frames []callFrame
 
 	funcCtxErrStep func() uint64
 	funcGetTime    func() time.Time
@@ -181,14 +181,14 @@ func (ce *callEngine) drop(r *wazeroir.InclusiveRange) {
 	}
 }
 
-func (ce *callEngine) pushFrame(frame *callFrame) {
+func (ce *callEngine) pushFrame(frame callFrame) {
 	if callStackCeiling <= len(ce.frames) {
 		panic(wasmruntime.ErrRuntimeCallStackOverflow)
 	}
 	ce.frames = append(ce.frames, frame)
 }
 
-func (ce *callEngine) popFrame() (frame *callFrame) {
+func (ce *callEngine) popFrame() (frame callFrame) {
 	// No need to check stack bound as we can assume that all the operations are valid thanks to validateFunction at
 	// module validation phase and wazeroir translation before compilation.
 	oneLess := len(ce.frames) - 1
@@ -701,7 +701,7 @@ func (ce *callEngine) callGoFunc(ctx context.Context, callCtx *wasm.CallContext,
 	if f.source.FunctionListener != nil {
 		ctx = f.source.FunctionListener.Before(ctx, params)
 	}
-	frame := &callFrame{f: f}
+	frame := callFrame{f: f}
 	ce.pushFrame(frame)
 	results = wasm.CallGoFunc(ctx, callCtx, f.source, params)
 	ce.popFrame()
@@ -713,7 +713,7 @@ func (ce *callEngine) callGoFunc(ctx context.Context, callCtx *wasm.CallContext,
 }
 
 func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallContext, f *function) (err error) {
-	frame := &callFrame{f: f}
+	frame := callFrame{f: f}
 	moduleInst := f.source.Module
 	memoryInst := moduleInst.Memory
 	globals := moduleInst.Globals

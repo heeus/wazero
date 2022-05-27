@@ -22,7 +22,7 @@ var (
 	callD []byte
 )
 
-func Benchmark_hwazero_CallBack(b *testing.B) {
+func Benchmark_hwazero_CallBackEx0(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
@@ -53,7 +53,7 @@ func Benchmark_hwazero_CallBack(b *testing.B) {
 	require.Nil(b, err)
 }
 
-func Benchmark_hwazero_CallBackParams(b *testing.B) {
+func Benchmark_hwazero_CallBackExParams(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
@@ -130,7 +130,7 @@ func Benchmark_hwazero_fib20_CallDuration(b *testing.B) {
 	require.Nil(b, err)
 }
 
-func Benchmark_hwazero_CallBackCall(b *testing.B) {
+func Benchmark_hwazero_CallBack(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
