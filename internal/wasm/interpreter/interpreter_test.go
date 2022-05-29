@@ -18,17 +18,17 @@ import (
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func TestInterpreter_CallEngine_PushFrame(t *testing.T) {
-	f1 := &callFrame{}
-	f2 := &callFrame{}
+	f1 := callFrame{}
+	f2 := callFrame{}
 
 	ce := callEngine{}
 	require.Equal(t, 0, len(ce.frames), "expected no frames")
 
 	ce.pushFrame(f1)
-	require.Equal(t, []*callFrame{f1}, ce.frames)
+	require.Equal(t, []callFrame{f1}, ce.frames)
 
 	ce.pushFrame(f2)
-	require.Equal(t, []*callFrame{f1, f2}, ce.frames)
+	require.Equal(t, []callFrame{f1, f2}, ce.frames)
 }
 
 func TestInterpreter_CallEngine_PushFrame_StackOverflow(t *testing.T) {
@@ -36,10 +36,10 @@ func TestInterpreter_CallEngine_PushFrame_StackOverflow(t *testing.T) {
 
 	callStackCeiling = 3
 
-	f1 := &callFrame{}
-	f2 := &callFrame{}
-	f3 := &callFrame{}
-	f4 := &callFrame{}
+	f1 := callFrame{}
+	f2 := callFrame{}
+	f3 := callFrame{}
+	f4 := callFrame{}
 
 	vm := callEngine{}
 	vm.pushFrame(f1)
