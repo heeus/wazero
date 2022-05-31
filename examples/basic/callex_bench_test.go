@@ -40,7 +40,6 @@ func Benchmark_hwazero_CallBackEx0(b *testing.B) {
 	module, err := rtm.InstantiateModuleFromCode(callCtxD, callD)
 	require.NoError(b, err)
 	defer module.Close(testCtxD)
-
 	callback := module.ExportedFunction("doCallback")
 
 	b.ResetTimer()

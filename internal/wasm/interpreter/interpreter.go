@@ -21,7 +21,6 @@ import (
 )
 
 const (
-	GasLimitKey                = "hwazero_gaslimit"
 	errContextCheckStep uint64 = 100
 	gasUnity            uint64 = 10000
 )
@@ -35,6 +34,7 @@ type engine struct {
 	mux             sync.RWMutex
 }
 
+// NewEngine creates new wasm 
 func NewEngine(enabledFeatures wasm.Features) wasm.Engine {
 	return &engine{
 		enabledFeatures: enabledFeatures,
