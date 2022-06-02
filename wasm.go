@@ -24,6 +24,7 @@ import (
 //	defer module.Close()
 //
 // See https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/
+
 type Runtime interface {
 	// NewModuleBuilder lets you create modules out of functions defined in Go.
 	//
@@ -117,6 +118,7 @@ type Runtime interface {
 	InstantiateModuleWithConfig(ctx context.Context, compiled *CompiledCode, config *ModuleConfig) (mod api.Module, err error)
 }
 
+// NewRuntime s.e.
 func NewRuntime() Runtime {
 	return NewRuntimeWithConfig(NewRuntimeConfig())
 }

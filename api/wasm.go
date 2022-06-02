@@ -252,6 +252,18 @@ type Memory interface {
 	Write(ctx context.Context, offset uint32, v []byte) bool
 }
 
+// CallStack s.e.
+type CallStack interface {
+	// Operations with stack
+	PushValue(v uint64)
+	PopValue() (v uint64)
+	PeekValues(count int) []uint64
+	Drop(rangeStart int, rangeEnd int)
+	Reset()
+	Pick(opus int)
+	Swap(opus int)
+}
+
 // EncodeI32 encodes the input as a ValueTypeI32.
 func EncodeI32(input int32) uint64 {
 	return uint64(uint32(input))

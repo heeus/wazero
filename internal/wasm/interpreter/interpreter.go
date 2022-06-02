@@ -34,7 +34,7 @@ type engine struct {
 	mux             sync.RWMutex
 }
 
-// NewEngine creates new wasm 
+// NewEngine creates new wasm
 func NewEngine(enabledFeatures wasm.Features) wasm.Engine {
 	return &engine{
 		enabledFeatures: enabledFeatures,
@@ -86,7 +86,7 @@ type moduleEngine struct {
 type callEngine struct {
 	// stack contains the operands.
 	// Note that all the values are represented as uint64.
-	stack []uint64
+	stack api.CallStack
 
 	// frames are the function call stack.
 	frames []callFrame
@@ -129,56 +129,27 @@ func (ce *callEngine) getCtxTime() time.Time {
 }
 
 func newcallEngine() *callEngine {
-	return &callEngine{}
+	return &callEngine{stack: api.NewCallEngineStack()}
 }
 
 func (ce *callEngine) pushValue(v uint64) {
-	ce.stack = append(ce.stack, v)
+	ce.stack.PushValue(v)
 }
 
 func (ce *callEngine) popValue() (v uint64) {
-	// No need to check stack bound
-	// as we can assume that all the operations
-	// are valid thanks to validateFunction
-	// at module validation phase
-	// and wazeroir translation
-	// before compilation.
-	stackTopIndex := len(ce.stack) - 1
-	v = ce.stack[stackTopIndex]
-	ce.stack = ce.stack[:stackTopIndex]
-	return
+	return ce.stack.PopValue()
 }
 
 // peekValues peeks api.ValueType values from the stack and returns them in reverse order.
 func (ce *callEngine) peekValues(count int) []uint64 {
-	if count == 0 {
-		return nil
-	}
-	stackTopIndex := len(ce.stack) - 1
-	peeked := ce.stack[stackTopIndex-count : stackTopIndex]
-	values := make([]uint64, 0, count)
-	for i := count - 1; i >= 0; i-- {
-		values = append(values, peeked[i])
-	}
-	return values
+	return ce.stack.PeekValues(count)
 }
 
 func (ce *callEngine) drop(r *wazeroir.InclusiveRange) {
-	// No need to check stack bound
-	// as we can assume that all the operations
-	// are valid thanks to validateFunction
-	// at module validation phase
-	// and wazeroir translation
-	// before compilation.
 	if r == nil {
 		return
-	} else if r.Start == 0 {
-		ce.stack = ce.stack[:len(ce.stack)-1-r.End]
-	} else {
-		newStack := ce.stack[:len(ce.stack)-1-r.End]
-		newStack = append(newStack, ce.stack[len(ce.stack)-r.Start:]...)
-		ce.stack = newStack
 	}
+	ce.stack.Drop(r.Start, r.End)
 }
 
 func (ce *callEngine) pushFrame(frame callFrame) {
@@ -688,7 +659,7 @@ func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm
 }
 
 func (ce *callEngine) reset() {
-	ce.stack = ce.stack[:0]
+	ce.stack.Reset()
 	ce.frames = ce.frames[:0]
 	ce.opcounter = 0
 }
@@ -869,14 +840,13 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 			}
 		case wazeroir.OperationKindPick:
 			{
-				ce.pushValue(ce.stack[len(ce.stack)-1-int(op.us[0])])
+				ce.stack.Pick(int(op.us[0]))
 				frame.pc++
 				callopgas = callopgas + gasUnity
 			}
 		case wazeroir.OperationKindSwap:
 			{
-				index := len(ce.stack) - 1 - int(op.us[0])
-				ce.stack[len(ce.stack)-1], ce.stack[index] = ce.stack[index], ce.stack[len(ce.stack)-1]
+				ce.stack.Swap(int(op.us[0]))
 				frame.pc++
 				callopgas = callopgas + gasUnity
 			}

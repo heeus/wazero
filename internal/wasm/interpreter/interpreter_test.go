@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/heeus/wazero/api"
 	"github.com/heeus/wazero/internal/buildoptions"
 	"github.com/heeus/wazero/internal/testing/enginetest"
 	"github.com/heeus/wazero/internal/testing/require"
@@ -265,7 +266,7 @@ func TestInterpreter_NonTrappingFloatToIntConversion(t *testing.T) {
 						&interpreterOp{kind: wazeroir.OperationKindBr, us: []uint64{math.MaxUint64}},
 					)
 
-					ce := &callEngine{}
+					ce := &callEngine{stack: api.NewCallEngineStack()}
 					f := &function{
 						source: &wasm.FunctionInstance{Module: &wasm.ModuleInstance{Engine: &moduleEngine{}}},
 						body:   body,
@@ -327,7 +328,7 @@ func TestInterpreter_CallEngine_callNativeFunc_signExtend(t *testing.T) {
 		} {
 			tc := tc
 			t.Run(fmt.Sprintf("%s(i32.const(0x%x))", wasm.InstructionName(tc.opcode), tc.in), func(t *testing.T) {
-				ce := &callEngine{}
+				ce := &callEngine{stack: api.NewCallEngineStack()}
 				f := &function{
 					source: &wasm.FunctionInstance{Module: &wasm.ModuleInstance{Engine: &moduleEngine{}}},
 					body: []*interpreterOp{
@@ -380,7 +381,7 @@ func TestInterpreter_CallEngine_callNativeFunc_signExtend(t *testing.T) {
 		} {
 			tc := tc
 			t.Run(fmt.Sprintf("%s(i64.const(0x%x))", wasm.InstructionName(tc.opcode), tc.in), func(t *testing.T) {
-				ce := &callEngine{}
+				ce := &callEngine{stack: api.NewCallEngineStack()}
 				f := &function{
 					source: &wasm.FunctionInstance{Module: &wasm.ModuleInstance{Engine: &moduleEngine{}}},
 					body: []*interpreterOp{
