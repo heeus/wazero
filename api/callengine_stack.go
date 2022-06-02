@@ -1,5 +1,7 @@
 package api
 
+import "time"
+
 // CallEngineStack s.e.
 type callEngineStack struct {
 	// stack contains the operands.
@@ -71,4 +73,10 @@ func (ces *callEngineStack) Swap(opus int) {
 func NewCallEngineStack() CallStack {
 	ces := callEngineStack{}
 	return &ces
+}
+
+//CallEngineParams s.e.
+type CallEngineParams struct {
+	Duration time.Duration
+	Gaslimit uint64
 }

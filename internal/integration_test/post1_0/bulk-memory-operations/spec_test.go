@@ -13,16 +13,6 @@ import (
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
-func TestBulkMemoryOperations_JIT(t *testing.T) {
-	if !wazero.JITSupported {
-		t.Skip()
-	}
-	testBulkMemoryOperations(t, wazero.NewRuntimeConfigJIT)
-	testTableCopy(t, wazero.NewRuntimeConfigJIT)
-	testTableInit(t, wazero.NewRuntimeConfigJIT)
-	testElemDrop(t, wazero.NewRuntimeConfigJIT)
-}
-
 func TestBulkMemoryOperations_Interpreter(t *testing.T) {
 	testBulkMemoryOperations(t, wazero.NewRuntimeConfigInterpreter)
 	testTableCopy(t, wazero.NewRuntimeConfigInterpreter)

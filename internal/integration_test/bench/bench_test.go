@@ -5,7 +5,6 @@ import (
 	_ "embed"
 	"fmt"
 	"math/rand"
-	"runtime"
 	"testing"
 
 	"github.com/heeus/wazero"
@@ -19,35 +18,6 @@ var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 // caseWasm was compiled from TinyGo testdata/case.go
 //go:embed testdata/case.wasm
 var caseWasm []byte
-
-func BenchmarkInvocation(b *testing.B) {
-	b.Run("interpreter", func(b *testing.B) {
-		m := instantiateHostFunctionModuleWithEngine(b, wazero.NewRuntimeConfigInterpreter())
-		defer m.Close(testCtx)
-		runAllInvocationBenches(b, m)
-	})
-	if runtime.GOARCH == "amd64" || runtime.GOARCH == "arm64" {
-		b.Run("jit", func(b *testing.B) {
-			m := instantiateHostFunctionModuleWithEngine(b, wazero.NewRuntimeConfigJIT())
-			defer m.Close(testCtx)
-			runAllInvocationBenches(b, m)
-		})
-	}
-}
-
-func BenchmarkInitialization(b *testing.B) {
-	b.Run("interpreter", func(b *testing.B) {
-		r := createRuntime(b, wazero.NewRuntimeConfigInterpreter())
-		runInitializationBench(b, r)
-	})
-
-	if runtime.GOARCH == "amd64" || runtime.GOARCH == "arm64" {
-		b.Run("jit", func(b *testing.B) {
-			r := createRuntime(b, wazero.NewRuntimeConfigJIT())
-			runInitializationBench(b, r)
-		})
-	}
-}
 
 func runInitializationBench(b *testing.B, r wazero.Runtime) {
 	compiled, err := r.CompileModule(testCtx, caseWasm)

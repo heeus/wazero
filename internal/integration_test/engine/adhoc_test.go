@@ -31,13 +31,6 @@ var tests = map[string]func(t *testing.T, r wazero.Runtime){
 	"exported function that grows memory":     testMemOps,
 }
 
-func TestEngineJIT(t *testing.T) {
-	if !wazero.JITSupported {
-		t.Skip()
-	}
-	runAllTests(t, tests, wazero.NewRuntimeConfigJIT())
-}
-
 func TestEngineInterpreter(t *testing.T) {
 	runAllTests(t, tests, wazero.NewRuntimeConfigInterpreter())
 }

@@ -14,13 +14,6 @@ import (
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
-func TestNonTrappingFloatToIntConversion_JIT(t *testing.T) {
-	if !wazero.JITSupported {
-		t.Skip()
-	}
-	testNonTrappingFloatToIntConversion(t, wazero.NewRuntimeConfigJIT)
-}
-
 func TestNonTrappingFloatToIntConversion_Interpreter(t *testing.T) {
 	testNonTrappingFloatToIntConversion(t, wazero.NewRuntimeConfigInterpreter)
 }

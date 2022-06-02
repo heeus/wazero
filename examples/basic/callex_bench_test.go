@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/heeus/wazero"
+	"github.com/heeus/wazero/api"
 	"github.com/heeus/wazero/internal/testing/require"
 )
 
@@ -44,7 +45,7 @@ func Benchmark_hwazero_CallBackEx0(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = callback.CallEx(testCtx, 0, 0)
+		_, err = callback.CallEx(testCtx, nil, api.CallEngineParams{})
 		if nil != err {
 			break
 		}
@@ -77,7 +78,7 @@ func Benchmark_hwazero_CallBackExParams(b *testing.B) {
 	var p2 uint64 = 5
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = callbackp.CallEx(testCtx, 5*time.Second, 300, p1, p2)
+		_, err = callbackp.CallEx(testCtx, nil, api.CallEngineParams{5 * time.Second, 300}, p1, p2)
 		if nil != err {
 			break
 		}
@@ -98,7 +99,7 @@ func Benchmark_hwazero_fib20_CallExDuration(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		if _, err = fibonacci.CallEx(testCtxD, 10*time.Second, 0, 20); err != nil {
+		if _, err = fibonacci.CallEx(testCtxD, nil, api.CallEngineParams{10*time.Second, 0}, 20); err != nil {
 			if nil != err {
 				break
 			}
