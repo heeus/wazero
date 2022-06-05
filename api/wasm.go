@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"time"
 )
 
 var ErrGasLimit = errors.New("gas limit exceeded")
@@ -255,16 +256,10 @@ type Memory interface {
 type ICallEngine interface {
 }
 
-// CallStack s.e.
-type CallStack interface {
-	// Operations with stack
-	PushValue(v uint64)
-	PopValue() (v uint64)
-	PeekValues(count int) []uint64
-	Drop(rangeStart int, rangeEnd int)
-	Reset()
-	Pick(opus int)
-	Swap(opus int)
+//CallEngineParams s.e.
+type CallEngineParams struct {
+	Duration time.Duration
+	Gaslimit uint64
 }
 
 // EncodeI32 encodes the input as a ValueTypeI32.

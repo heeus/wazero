@@ -56,7 +56,7 @@ func TestInterpreter_Call_WithContextTimeout(t *testing.T) {
 			tc := tc
 			t.Run(fmt.Sprintf("%s(i32.const(0x%x))", wasm.InstructionName(tc.opcode), tc.in), func(t *testing.T) {
 				fmockStep := func() uint64 { return 2 }
-				ce := &callEngine{stack: api.NewCallEngineStack(), funcCtxErrStep: fmockStep, opcounter: fmockStep()}
+				ce := &callEngine{stack: newCallEngineStack(), funcCtxErrStep: fmockStep, opcounter: fmockStep()}
 				f := &function{
 					source: &wasm.FunctionInstance{Module: &wasm.ModuleInstance{Engine: &moduleEngine{}}},
 					body: []*interpreterOp{
@@ -128,7 +128,7 @@ func TestInterpreter_Call_WithGasLimit(t *testing.T) {
 			tc := tc
 			t.Run(fmt.Sprintf("%s(i32.const(0x%x))", wasm.InstructionName(tc.opcode), tc.in), func(t *testing.T) {
 				fmockStep := func() uint64 { return 1 }
-				ce := &callEngine{stack: api.NewCallEngineStack(), funcCtxErrStep: fmockStep, opcounter: fmockStep()}
+				ce := &callEngine{stack: newCallEngineStack(), funcCtxErrStep: fmockStep, opcounter: fmockStep()}
 				mdl := wasm.ModuleInstance{Engine: &moduleEngine{}}
 				f := &function{
 					source: &wasm.FunctionInstance{Module: &mdl},
@@ -217,7 +217,7 @@ func TestInterpreter_Call_WithDuration(t *testing.T) {
 			t.Run(fmt.Sprintf("%s(i32.const(0x%x))", wasm.InstructionName(tc.opcode), tc.in), func(t *testing.T) {
 				fmockStep := func() uint64 { return 1 }
 				// Set test duration to 10 Milliseconds
-				ce := &callEngine{stack: api.NewCallEngineStack(), funcCtxErrStep: fmockStep, duration: 10 * time.Millisecond, opcounter: fmockStep()}
+				ce := &callEngine{stack: newCallEngineStack(), funcCtxErrStep: fmockStep, duration: 10 * time.Millisecond, opcounter: fmockStep()}
 				f := &function{
 					source: &wasm.FunctionInstance{Module: &wasm.ModuleInstance{Engine: &moduleEngine{}}},
 					body: []*interpreterOp{

@@ -86,7 +86,7 @@ type moduleEngine struct {
 type callEngine struct {
 	// stack contains the operands.
 	// Note that all the values are represented as uint64.
-	stack api.CallStack
+	stack callStack
 
 	// frames are the function call stack.
 	frames []callFrame
@@ -129,7 +129,7 @@ func (ce *callEngine) getCtxTime() time.Time {
 }
 
 func newcallEngine() *callEngine {
-	return &callEngine{stack: api.NewCallEngineStack()}
+	return &callEngine{stack: newCallEngineStack()}
 }
 
 func (ce *callEngine) pushValue(v uint64) {
@@ -651,7 +651,7 @@ func (me *moduleEngine) Call(ctx context.Context, m *wasm.CallContext, f *wasm.F
 // CallEx invokes a function instance f with pre-created callEngine parameter.
 func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, ce api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (results []uint64, err error) {
 	if me.callEng == nil {
-		if ce == nil{
+		if ce == nil {
 			me.callEng = newcallEngine()
 		} else {
 			me.callEng = ce.(*callEngine)
@@ -2006,4 +2006,10 @@ func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.Cal
 	for _, v := range results {
 		ce.pushValue(v)
 	}
+}
+
+// newCallEngineStack s.e.
+func newCallEngineStack() callStack {
+	ces := callEngineStack{}
+	return &ces
 }

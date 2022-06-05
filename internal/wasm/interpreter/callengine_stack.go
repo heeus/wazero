@@ -1,6 +1,16 @@
-package api
+package interpreter
 
-import "time"
+// CallStack s.e.
+type callStack interface {
+	// Operations with stack
+	PushValue(v uint64)
+	PopValue() (v uint64)
+	PeekValues(count int) []uint64
+	Drop(rangeStart int, rangeEnd int)
+	Reset()
+	Pick(opus int)
+	Swap(opus int)
+}
 
 // CallEngineStack s.e.
 type callEngineStack struct {
@@ -67,16 +77,4 @@ func (ces *callEngineStack) Pick(opus int) {
 func (ces *callEngineStack) Swap(opus int) {
 	index := len(ces.stack) - 1 - opus
 	ces.stack[len(ces.stack)-1], ces.stack[index] = ces.stack[index], ces.stack[len(ces.stack)-1]
-}
-
-// NewCallEngineStack s.e.
-func NewCallEngineStack() CallStack {
-	ces := callEngineStack{}
-	return &ces
-}
-
-//CallEngineParams s.e.
-type CallEngineParams struct {
-	Duration time.Duration
-	Gaslimit uint64
 }
