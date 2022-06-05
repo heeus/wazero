@@ -40,6 +40,7 @@ func TestJustCall(t *testing.T) {
 
 	var callEngine api.ICallEngine
 	justCall := module.ExportedFunction("justCall")
+
 	ceCSP := api.CallEngineParams{0, 0}
 	_, err = justCall.CallEx(testCtx, callEngine, ceCSP)
 	require.Equal(t, err, nil)
@@ -116,4 +117,37 @@ func TestFib_GasLimit(t *testing.T) {
 		}
 	}
 	require.Equal(t, err, api.ErrGasLimit)
+}
+
+func TestCallGoFunc2Params(t *testing.T) {
+
+	hcallbaсkCount = 0
+	var err error
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
+	require.NotNil(t, rtm)
+
+	host, err := rtm.NewModuleBuilder("env").
+		ExportFunction("callbackp", hcallbackStackParams).
+		ExportFunction("callback", hcallback).
+		Instantiate(testCtx)
+
+	require.Nil(t, err)
+	defer host.Close(testCtx)
+
+	module, err := rtm.InstantiateModuleFromCode(callCtxD, callD)
+	require.NoError(t, err)
+	defer module.Close(testCtxD)
+
+	callbackp := module.ExportedFunction("doCallbackp")
+	//callbackp.SetFuncStackParam()
+
+	var p1 uint64 = 4
+	var p2 uint64 = 5
+	_, err = callbackp.CallEx(testCtx, nil, api.CallEngineParams{0, 0}, p1, p2)
+	require.Nil(t, err)
+	require.Equal(t, hcallbaсkCount, uint64(9))
+}
+
+func hcallbackStackParams(i int32, j int32) {
+	hcallbaсkCount = hcallbaсkCount + uint64(i) + uint64(j)
 }

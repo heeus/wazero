@@ -99,7 +99,7 @@ func Benchmark_hwazero_fib20_CallExDuration(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		if _, err = fibonacci.CallEx(testCtxD, nil, api.CallEngineParams{10*time.Second, 0}, 20); err != nil {
+		if _, err = fibonacci.CallEx(testCtxD, nil, api.CallEngineParams{10 * time.Second, 0}, 20); err != nil {
 			if nil != err {
 				break
 			}
@@ -149,11 +149,11 @@ func Benchmark_hwazero_CallBack(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtxD)
 
-	callback := module.ExportedFunction("doCallbackp")
+	callback := module.ExportedFunction("doCallback")
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = callback.Call(testCtx, 3, 4)
+		_, err = callback.Call(testCtx)
 		if nil != err {
 			break
 		}

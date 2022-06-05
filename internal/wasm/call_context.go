@@ -124,6 +124,7 @@ func (m *CallContext) ExportedFunction(name string) api.Function {
 type importedFn struct {
 	importingModule *CallContext
 	importedFn      *FunctionInstance
+	funcStackParam  bool
 }
 
 // ParamTypes implements the same method as documented on api.Function.
@@ -134,6 +135,10 @@ func (f *importedFn) ParamTypes() []api.ValueType {
 // ResultTypes implements the same method as documented on api.Function.
 func (f *importedFn) ResultTypes() []api.ValueType {
 	return f.importedFn.ResultTypes()
+}
+
+func (f *importedFn) SetFuncStackParam() {
+	f.importedFn.Kind = FunctionKindGoStackParams
 }
 
 // Call implements the same method as documented on api.Function.

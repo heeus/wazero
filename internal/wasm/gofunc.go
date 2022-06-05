@@ -26,6 +26,8 @@ const (
 	// FunctionKindGoContextModule is a function implemented in Go, with a signature matching FunctionType, except arg
 	// zero is a context.Context and arg one is an api.Module.
 	FunctionKindGoContextModule
+	// FunctionKindGoStackParams passes params as part of stack
+	FunctionKindGoStackParams
 )
 
 // Below are reflection code to get the interface type used to parse functions and set values.
@@ -75,6 +77,15 @@ func PopValues(count int, popper func() uint64) []uint64 {
 // Note: ctx must use the caller's memory, which might be different from the defining module on an imported function.
 func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, params []uint64) []uint64 {
 	tp := f.GoFunc.Type()
+	var results []uint64
+	if tp.NumOut() > 0 {
+		results = make([]uint64, 0, tp.NumOut())
+	}
+
+	if f.Kind == FunctionKindGoStackParams {
+		f.GoFunc.Call(nil)
+		return results
+	}
 
 	var in []reflect.Value
 	if tp.NumIn() != 0 {
@@ -110,12 +121,7 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 			i++
 		}
 	}
-
 	// Execute the host function and push back the call result onto the stack.
-	var results []uint64
-	if tp.NumOut() > 0 {
-		results = make([]uint64, 0, tp.NumOut())
-	}
 	for _, ret := range f.GoFunc.Call(in) {
 		switch ret.Kind() {
 		case reflect.Float32:
