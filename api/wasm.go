@@ -131,7 +131,7 @@ type Function interface {
 	// sys.ExitError. Interpreting this is specific to the module. For example, some "main" functions always call a
 	// function that exits.
 	Call(ctx context.Context, params ...uint64) ([]uint64, error)
-	CallEx(ctx context.Context, ceStack CallStack, ceParams CallEngineParams, params ...uint64) ([]uint64, error)
+	CallEx(ctx context.Context, ce ICallEngine, ceParams CallEngineParams, params ...uint64) ([]uint64, error)
 }
 
 // Global is a WebAssembly 1.0 (20191205) global exported from an instantiated module (wazero.Runtime InstantiateModule).
@@ -249,6 +249,10 @@ type Memory interface {
 
 	// Write writes the slice to the underlying buffer at the offset or returns false if out of range.
 	Write(ctx context.Context, offset uint32, v []byte) bool
+}
+
+// ICallEngine s.e.
+type ICallEngine interface {
 }
 
 // CallStack s.e.

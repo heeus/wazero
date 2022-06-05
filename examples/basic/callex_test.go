@@ -16,6 +16,34 @@ var (
 	//go:embed testdata/fib.wasm
 	fib []byte
 )
+var (
+	//go:embed testdata/callp.wasm
+	calls []byte
+)
+
+func TestJustCall(t *testing.T) {
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
+	require.NotNil(t, rtm)
+
+	var err error
+
+	host, err := rtm.NewModuleBuilder("env").
+		ExportFunction("callbackp", hcallbackp).
+		ExportFunction("callback", hcallback).
+		Instantiate(testCtx)
+	require.Nil(t, err)
+	defer host.Close(testCtx)
+
+	module, err := rtm.InstantiateModuleFromCode(testCtx, calls)
+	require.NoError(t, err)
+	defer module.Close(testCtx)
+
+	var callEngine api.ICallEngine
+	justCall := module.ExportedFunction("justCall")
+	ceCSP := api.CallEngineParams{0, 0}
+	_, err = justCall.CallEx(testCtx, callEngine, ceCSP)
+	require.Equal(t, err, nil)
+}
 
 func TestFib_Duration(t *testing.T) {
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
@@ -37,7 +65,7 @@ func TestFib_Duration(t *testing.T) {
 			}
 		}
 	}
-	require.Equal(t, err.Error(), api.ErrDuration.Error())
+	require.Equal(t, err, api.ErrDuration)
 }
 
 func TestFib_GasLimit(t *testing.T) {
@@ -64,7 +92,7 @@ func TestFib_GasLimit(t *testing.T) {
 		}
 	}
 	// Gaslimit 300
-	require.Equal(t, err.Error(), api.ErrGasLimit.Error())
+	require.Equal(t, err, api.ErrGasLimit)
 	err = nil
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {
 		num := uint64(num)
@@ -76,7 +104,7 @@ func TestFib_GasLimit(t *testing.T) {
 		}
 	}
 	// Gaslimit 1000
-	require.Equal(t, err.Error(), api.ErrGasLimit.Error())
+	require.Equal(t, err, api.ErrGasLimit)
 	err = nil
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {
 		num := uint64(num)
@@ -87,5 +115,5 @@ func TestFib_GasLimit(t *testing.T) {
 			}
 		}
 	}
-	require.Equal(t, err.Error(), api.ErrGasLimit.Error())
+	require.Equal(t, err, api.ErrGasLimit)
 }

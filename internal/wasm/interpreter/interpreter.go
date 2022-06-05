@@ -129,7 +129,7 @@ func (ce *callEngine) getCtxTime() time.Time {
 }
 
 func newcallEngine() *callEngine {
-	return &callEngine{}
+	return &callEngine{stack: api.NewCallEngineStack()}
 }
 
 func (ce *callEngine) pushValue(v uint64) {
@@ -645,19 +645,17 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 // Call implements the same method as documented on wasm.ModuleEngine.
 func (me *moduleEngine) Call(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, params ...uint64) (results []uint64, err error) {
 	me.callEng = newcallEngine()
-	me.callEng.stack = api.NewCallEngineStack()
 	return me.doCall(ctx, m, f, params...)
 }
 
 // CallEx invokes a function instance f with pre-created callEngine parameter.
-func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, ceStack api.CallStack, ceParams api.CallEngineParams, params ...uint64) (results []uint64, err error) {
+func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, ce api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (results []uint64, err error) {
 	if me.callEng == nil {
-		me.callEng = newcallEngine()
-	}
-	if ceStack == nil {
-		me.callEng.stack = api.NewCallEngineStack()
-	} else {
-		me.callEng.stack = ceStack
+		if ce == nil{
+			me.callEng = newcallEngine()
+		} else {
+			me.callEng = ce.(*callEngine)
+		}
 	}
 	me.callEng = me.callEng.WithDuration(ceParams.Duration)
 	me.callEng = me.callEng.WithGasLimit(ceParams.Gaslimit)

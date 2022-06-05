@@ -46,7 +46,7 @@ type ModuleEngine interface {
 	Call(ctx context.Context, m *CallContext, f *FunctionInstance, params ...uint64) (results []uint64, err error)
 
 	// CallEx invokes a function instance f with given parameters, duration and gas limit.
-	CallEx(ctx context.Context, m *CallContext, f *FunctionInstance, ceStack api.CallStack, ceParams api.CallEngineParams, params ...uint64) (results []uint64, err error)
+	CallEx(ctx context.Context, m *CallContext, f *FunctionInstance, ceStack api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (results []uint64, err error)
 
 	// CreateFuncElementInstance creates an ElementInstance whose references are engine-specific function pointers
 	// corresponding to the given `indexes`.

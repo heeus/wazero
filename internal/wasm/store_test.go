@@ -414,8 +414,8 @@ func (e *mockModuleEngine) Call(ctx context.Context, callCtx *CallContext, f *Fu
 }
 
 // CallEx implements the same method as documented on wasm.ModuleEngine.
-func (e *mockModuleEngine) CallEx(ctx context.Context, m *CallContext, f *FunctionInstance, ce api.CallStack, ceParams api.CallEngineParams, params ...uint64) (results []uint64, err error) {
-	return e.Call(ctx, m, f, params...)
+func (e *mockModuleEngine) CallEx(ctx context.Context, m *CallContext, f *FunctionInstance, ce api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (results []uint64, err error) {
+	return e.CallEx(ctx, m, f, ce, ceParams, params...)
 }
 
 // Close implements the same method as documented on wasm.ModuleEngine.

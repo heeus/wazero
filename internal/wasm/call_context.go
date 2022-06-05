@@ -146,7 +146,7 @@ func (f *importedFn) Call(ctx context.Context, params ...uint64) (ret []uint64, 
 }
 
 // CallEx implements the same method as documented on api.Function with duration & gaslimit.
-func (f *importedFn) CallEx(ctx context.Context, ce api.CallStack, ceParams api.CallEngineParams, params ...uint64) (ret []uint64, ere error) {
+func (f *importedFn) CallEx(ctx context.Context, ce api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (ret []uint64, ere error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -174,7 +174,7 @@ func (f *FunctionInstance) Call(ctx context.Context, params ...uint64) (ret []ui
 }
 
 // CallEx implements the same method as documented on api.Function with duration & gaslimit.
-func (f *FunctionInstance) CallEx(ctx context.Context, ce api.CallStack, ceParams api.CallEngineParams, params ...uint64) (ret []uint64, ere error) {
+func (f *FunctionInstance) CallEx(ctx context.Context, ce api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (ret []uint64, ere error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
