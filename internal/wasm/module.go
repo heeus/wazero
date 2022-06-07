@@ -919,6 +919,7 @@ const (
 	ValueTypeI64 = api.ValueTypeI64
 	ValueTypeF32 = api.ValueTypeF32
 	ValueTypeF64 = api.ValueTypeF64
+	ValueTypeSlice = api.ValueTypeSlice
 )
 
 // ValueTypeName is an alias of api.ValueTypeName defined to simplify imports.

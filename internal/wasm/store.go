@@ -489,10 +489,12 @@ func (s *Store) resolveImports(module *Module) (
 			expectedType := module.TypeSection[i.DescFunc]
 			importedFunction := imported.Function
 
-			actualType := importedFunction.Type
-			if !expectedType.EqualsSignature(actualType.Params, actualType.Results) {
-				err = errorInvalidImport(i, idx, fmt.Errorf("signature mismatch: %s != %s", expectedType, actualType))
-				return
+			if importedFunction.Kind != FunctionKindGoStackArgs {
+				actualType := importedFunction.Type
+				if !expectedType.EqualsSignature(actualType.Params, actualType.Results) {
+					err = errorInvalidImport(i, idx, fmt.Errorf("signature mismatch: %s != %s", expectedType, actualType))
+					return
+				}
 			}
 
 			importedFunctions = append(importedFunctions, importedFunction)

@@ -140,9 +140,10 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 }
 
 func CallGoFuncStackParams(f *FunctionInstance, params []uint64) []uint64 {
-	var fp func([]uint64) []uint64
-	fp = f.GoFuncInstance.(func([]uint64) []uint64)
-	return fp(params)
+	var fp func([]uint64)
+	fp = f.GoFuncInstance.(func([]uint64))
+	fp(params)
+	return nil
 }
 
 func newContextVal(ctx context.Context) reflect.Value {
@@ -255,6 +256,8 @@ func getTypeOf(kind reflect.Kind) (ValueType, bool) {
 		return ValueTypeI32, true
 	case reflect.Int64, reflect.Uint64:
 		return ValueTypeI64, true
+	case reflect.Slice:
+		return ValueTypeSlice, true
 	default:
 		return 0x00, false
 	}
