@@ -26,8 +26,8 @@ const (
 	// FunctionKindGoContextModule is a function implemented in Go, with a signature matching FunctionType, except arg
 	// zero is a context.Context and arg one is an api.Module.
 	FunctionKindGoContextModule
-	// FunctionKindGoStackParams passes params as part of stack
-	FunctionKindGoStackParams
+	// FunctionKindGoStackArgs passes params as part of stack
+	FunctionKindGoStackArgs
 )
 
 // Below are reflection code to get the interface type used to parse functions and set values.
@@ -82,7 +82,7 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 		results = make([]uint64, 0, tp.NumOut())
 	}
 
-	if f.Kind == FunctionKindGoStackParams {
+	if f.Kind == FunctionKindGoStackArgs {
 		f.GoFunc.Call(nil)
 		return results
 	}
@@ -137,6 +137,12 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 		}
 	}
 	return results
+}
+
+func CallGoFuncStackParams(f *FunctionInstance, params []uint64) []uint64 {
+	var fp func([]uint64) []uint64
+	fp = f.GoFuncInstance.(func([]uint64) []uint64)
+	return fp(params)
 }
 
 func newContextVal(ctx context.Context) reflect.Value {

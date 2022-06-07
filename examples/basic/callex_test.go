@@ -130,6 +130,7 @@ func TestCallGoFunc2Params(t *testing.T) {
 		ExportFunction("callbackp", hcallbackStackParams).
 		ExportFunction("callback", hcallback).
 		Instantiate(testCtx)
+	host.ExportedFunction("callbackp").SetFuncStackParam()
 
 	require.Nil(t, err)
 	defer host.Close(testCtx)
@@ -139,7 +140,6 @@ func TestCallGoFunc2Params(t *testing.T) {
 	defer module.Close(testCtxD)
 
 	callbackp := module.ExportedFunction("doCallbackp")
-	//callbackp.SetFuncStackParam()
 
 	var p1 uint64 = 4
 	var p2 uint64 = 5

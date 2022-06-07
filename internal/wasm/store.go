@@ -127,6 +127,10 @@ type (
 		// specific to Wasm functions.
 		GoFunc *reflect.Value
 
+		// GoFuncInstance holds the runtime pointer on host function.
+		// This is not nil when Kind == FunctionKindGoStackParams.
+		GoFuncInstance interface{}
+
 		// Fields above here are settable prior to instantiation. Below are set by the Store during instantiation.
 
 		// ModuleInstance holds the pointer to the module instance to which this function belongs.
@@ -198,7 +202,7 @@ func (f *FunctionInstance) ParamNames() []string {
 
 // SetFuncStackParam - parameters are passed over stack
 func (f *FunctionInstance) SetFuncStackParam() {
-	f.Kind = FunctionKindGoStackParams
+	f.Kind = FunctionKindGoStackArgs
 }
 
 // The wazero specific limitations described at RATIONALE.md.

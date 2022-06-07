@@ -85,6 +85,7 @@ func addFuncs(m *Module, nameToGoFunc map[string]interface{}, enabledFeatures Fe
 	m.NameSection.FunctionNames = make([]*NameAssoc, 0, funcCount)
 	m.FunctionSection = make([]Index, 0, funcCount)
 	m.HostFunctionSection = make([]*reflect.Value, 0, funcCount)
+	m.HostFunctionInstanceSection = make([]interface{}, 0, funcCount)
 
 	// Sort names for consistent iteration
 	for k := range nameToGoFunc {
@@ -94,7 +95,8 @@ func addFuncs(m *Module, nameToGoFunc map[string]interface{}, enabledFeatures Fe
 
 	for idx := Index(0); idx < funcCount; idx++ {
 		name := funcNames[idx]
-		fn := reflect.ValueOf(nameToGoFunc[name])
+		finst := nameToGoFunc[name]
+		fn := reflect.ValueOf(finst)
 		_, functionType, err := getFunctionType(&fn, enabledFeatures)
 		if err != nil {
 			return fmt.Errorf("func[%s] %w", name, err)
@@ -102,6 +104,7 @@ func addFuncs(m *Module, nameToGoFunc map[string]interface{}, enabledFeatures Fe
 
 		m.FunctionSection = append(m.FunctionSection, m.maybeAddType(functionType))
 		m.HostFunctionSection = append(m.HostFunctionSection, &fn)
+		m.HostFunctionInstanceSection = append(m.HostFunctionInstanceSection, finst)
 		m.ExportSection = append(m.ExportSection, &Export{Type: ExternTypeFunc, Name: name, Index: idx})
 		m.NameSection.FunctionNames = append(m.NameSection.FunctionNames, &NameAssoc{Index: idx, Name: name})
 	}
@@ -173,11 +176,13 @@ func (m *Module) buildHostFunctions(
 	var functionNames = m.NameSection.FunctionNames
 	for idx, typeIndex := range m.FunctionSection {
 		fn := m.HostFunctionSection[idx]
+		finst := m.HostFunctionInstanceSection[idx]
 		f := &FunctionInstance{
-			Kind:   kind(fn.Type()),
-			Type:   m.TypeSection[typeIndex],
-			GoFunc: fn,
-			Idx:    Index(idx),
+			Kind:           kind(fn.Type()),
+			Type:           m.TypeSection[typeIndex],
+			GoFunc:         fn,
+			GoFuncInstance: finst,
+			Idx:            Index(idx),
 		}
 		name := functionNames[f.Idx].Name
 		f.moduleName = moduleName

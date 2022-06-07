@@ -157,6 +157,8 @@ type Module struct {
 	// See https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/#host-functions%E2%91%A2
 	HostFunctionSection []*reflect.Value
 
+	HostFunctionInstanceSection []interface{}
+
 	// elementSegments are built on Validate when SectionIDElement is non-empty and all inputs are valid.
 	//
 	// Note: elementSegments retain Module.ElementSection order. Since an ElementSegment can overlap with another, order

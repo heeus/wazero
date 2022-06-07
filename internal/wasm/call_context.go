@@ -138,7 +138,7 @@ func (f *importedFn) ResultTypes() []api.ValueType {
 }
 
 func (f *importedFn) SetFuncStackParam() {
-	f.importedFn.Kind = FunctionKindGoStackParams
+	f.importedFn.Kind = FunctionKindGoStackArgs
 }
 
 // Call implements the same method as documented on api.Function.
