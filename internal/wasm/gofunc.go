@@ -34,6 +34,7 @@ const (
 
 var moduleType = reflect.TypeOf((*api.Module)(nil)).Elem()
 var goContextType = reflect.TypeOf((*context.Context)(nil)).Elem()
+var hfuncType = reflect.TypeOf((*api.StackParamFuncType)(nil)).Elem()
 var errorType = reflect.TypeOf((*error)(nil)).Elem()
 
 // PopGoFuncParams pops the correct number of parameters off the stack into a parameter slice for use in CallGoFunc
@@ -140,8 +141,8 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 }
 
 func CallGoFuncStackParams(f *FunctionInstance, params []uint64) []uint64 {
-	var fp func([]uint64)
-	fp = f.GoFuncInstance.(func([]uint64))
+	var fp func([]uint64) []uint64
+	fp = f.GoFuncInstance.(func([]uint64) []uint64)
 	fp(params)
 	return nil
 }
@@ -191,23 +192,28 @@ func getFunctionType(fn *reflect.Value, enabledFeatures Features) (fk FunctionKi
 
 	for i := 0; i < len(ft.Params); i++ {
 		pI := p.In(i + pOffset)
-		if t, ok := getTypeOf(pI.Kind()); ok {
-			ft.Params[i] = t
-			continue
+		if pI.Kind() == reflect.Slice && len(ft.Params) > 1 {
+			err = fmt.Errorf("param[%d] is slice, so it must be only one argument", i+pOffset)
 		}
+		if err == nil {
+			if t, ok := getTypeOf(pI.Kind()); ok {
+				ft.Params[i] = t
+				continue
+			}
 
-		// Now, we will definitely err, decide which message is best
-		var arg0Type reflect.Type
-		if hc := pI.Implements(moduleType); hc {
-			arg0Type = moduleType
-		} else if gc := pI.Implements(goContextType); gc {
-			arg0Type = goContextType
-		}
+			// Now, we will definitely err, decide which message is best
+			var arg0Type reflect.Type
+			if hc := pI.Implements(moduleType); hc {
+				arg0Type = moduleType
+			} else if gc := pI.Implements(goContextType); gc {
+				arg0Type = goContextType
+			}
 
-		if arg0Type != nil {
-			err = fmt.Errorf("param[%d] is a %s, which may be defined only once as param[0]", i+pOffset, arg0Type)
-		} else {
-			err = fmt.Errorf("param[%d] is unsupported: %s", i+pOffset, pI.Kind())
+			if arg0Type != nil {
+				err = fmt.Errorf("param[%d] is a %s, which may be defined only once as param[0]", i+pOffset, arg0Type)
+			} else {
+				err = fmt.Errorf("param[%d] is unsupported: %s", i+pOffset, pI.Kind())
+			}
 		}
 		return
 	}
@@ -232,6 +238,9 @@ func getFunctionType(fn *reflect.Value, enabledFeatures Features) (fk FunctionKi
 
 func kind(p reflect.Type) FunctionKind {
 	pCount := p.NumIn()
+	if pCount == 1 && p.In(0).Kind() == reflect.Slice {
+		return FunctionKindGoStackArgs
+	}
 	if pCount > 0 && p.In(0).Kind() == reflect.Interface {
 		p0 := p.In(0)
 		if p0.Implements(moduleType) {

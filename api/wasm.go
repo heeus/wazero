@@ -12,6 +12,8 @@ import (
 var ErrGasLimit = errors.New("gas limit exceeded")
 var ErrDuration = errors.New("duration exceeded")
 
+type StackParamFuncType = func([]uint64) []uint64
+
 // ValueType describes a numeric type used in Web Assembly 1.0 (20191205). For example, Function parameters and results are
 // only definable as a value type.
 //
@@ -137,9 +139,6 @@ type Function interface {
 
 	// CallEx - the same as Call, but CallEngine and CallEngineParams are defined outside
 	CallEx(ctx context.Context, ce ICallEngine, ceParams CallEngineParams, params ...uint64) ([]uint64, error)
-
-	// SetFuncStackParam
-	SetFuncStackParam()
 }
 
 // Global is a WebAssembly 1.0 (20191205) global exported from an instantiated module (wazero.Runtime InstantiateModule).

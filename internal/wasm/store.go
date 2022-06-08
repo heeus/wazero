@@ -200,11 +200,6 @@ func (f *FunctionInstance) ParamNames() []string {
 	return f.paramNames
 }
 
-// SetFuncStackParam - parameters are passed over stack
-func (f *FunctionInstance) SetFuncStackParam() {
-	f.Kind = FunctionKindGoStackArgs
-}
-
 // The wazero specific limitations described at RATIONALE.md.
 const (
 	maximumFunctionTypes = 1 << 27

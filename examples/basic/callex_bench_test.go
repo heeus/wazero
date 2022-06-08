@@ -61,7 +61,7 @@ func Benchmark_hwazero_CallBackExParams(b *testing.B) {
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
-		ExportFunction("callbackp", hcallbackp).
+		ExportFunction("callbackp", hcallbackSP).
 		ExportFunction("callback", hcallback).
 		Instantiate(testCtx)
 
@@ -174,10 +174,10 @@ func Benchmark_hwazero_CallBackP(b *testing.B) {
 		Instantiate(testCtx)
 	cbp := host.ExportedFunction("callbackp")
 	require.NotNil(b, cbp)
-	cbp.SetFuncStackParam()
 
 	require.Nil(b, err)
 	defer host.Close(testCtx)
+	var ce api.ICallEngine
 
 	module, err := rtm.InstantiateModuleFromCode(callCtxD, callD)
 	require.NoError(b, err)
@@ -187,7 +187,41 @@ func Benchmark_hwazero_CallBackP(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = callbackp.CallEx(testCtx, nil, api.CallEngineParams{}, 2, 3)
+		_, err = callbackp.CallEx(testCtx, ce, api.CallEngineParams{}, 2, 3)
+		if nil != err {
+			break
+		}
+	}
+	require.Nil(b, err)
+}
+
+func Benchmark_hwazero_CallBackSP(b *testing.B) {
+
+	hcallbaсkCount = 0
+	var err error
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
+	require.NotNil(b, rtm)
+
+	host, err := rtm.NewModuleBuilder("env").
+		ExportFunction("callbackp", hcallbackSP).
+		ExportFunction("callback", hcallback).
+		Instantiate(testCtx)
+	cbp := host.ExportedFunction("callbackp")
+	require.NotNil(b, cbp)
+
+	require.Nil(b, err)
+	defer host.Close(testCtx)
+
+	module, err := rtm.InstantiateModuleFromCode(callCtxD, callD)
+	require.NoError(b, err)
+	defer module.Close(testCtxD)
+
+	callbackp := module.ExportedFunction("doCallbackp")
+	var ce api.ICallEngine
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err = callbackp.CallEx(testCtx, ce, api.CallEngineParams{}, 2, 3)
 		if nil != err {
 			break
 		}
@@ -199,14 +233,13 @@ func hcallback() {
 	hcallbaсkCount++
 }
 
-/*
-func hcallbackp(i int32, j int32) {
+func hcallbackp(i int32, j int32, k int32) {
 	hcallbaсkCount = hcallbaсkCount + uint64(i) + uint64(j)
 }
-*/
 
-func hcallbackp(pars []uint64) {
+func hcallbackSP(pars []uint64) []uint64 {
 	for i := 0; i < len(pars); i++ {
 		hcallbaсkCount = hcallbaсkCount + pars[i]
 	}
+	return nil
 }

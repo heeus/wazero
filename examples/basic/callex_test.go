@@ -132,7 +132,6 @@ func TestCallGoFunc2Params(t *testing.T) {
 		Instantiate(testCtx)
 	cbp := host.ExportedFunction("callbackp")
 	require.NotNil(t, cbp)
-	cbp.SetFuncStackParam()
 
 	require.Nil(t, err)
 	defer host.Close(testCtx)
@@ -145,13 +144,15 @@ func TestCallGoFunc2Params(t *testing.T) {
 
 	var p1 uint64 = 4
 	var p2 uint64 = 5
-	_, err = callbackp.CallEx(testCtx, nil, api.CallEngineParams{0, 0}, p1, p2)
+	_, err = callbackp.CallEx(testCtx, nil, api.CallEngineParams{}, p1, p2)
 	require.Nil(t, err)
-	//require.Equal(t, hcallbaсkCount, uint64(9))
+	require.Equal(t, hcallbaсkCount, uint64(44))
 }
 
-func hcallbackStackParams(pars []uint64) {
+func hcallbackStackParams(pars []uint64) (ret []uint64) {
 	for i := 0; i < len(pars); i++ {
 		hcallbaсkCount = hcallbaсkCount + pars[i]
 	}
+	ret = nil
+	return
 }

@@ -708,6 +708,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	opdur := ce.duration
 	startTime := ce.startTime
 	timefunc := ce.getCtxTime
+	stackpos := ce.stack.GetLen()
 	for frame.pc < bodyLen {
 		opcounter--
 		if opcounter == 0 {
@@ -771,7 +772,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				ce.opcounter = opcounter
 				f := functions[op.us[0]]
 				if f.hostFn != nil {
-					ce.callGoFuncWithStack(ctx, callCtx, f)
+					ce.callGoFuncWithStack(ctx, callCtx, f, stackpos)
 					callopgas = callopgas + gasUnity
 				} else if listener != nil {
 					ctx, err = ce.callNativeFuncWithListener(ctx, callCtx, f, listener)
@@ -806,7 +807,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				// Call in.
 				ce.opgas = callopgas
 				if tf.hostFn != nil {
-					ce.callGoFuncWithStack(ctx, callCtx, tf)
+					ce.callGoFuncWithStack(ctx, callCtx, tf, stackpos)
 				} else if listener != nil {
 					ctx, err = ce.callNativeFuncWithListener(ctx, callCtx, f, listener)
 					if nil != err {
@@ -2000,11 +2001,11 @@ func (ce *callEngine) popMemoryOffset(op *interpreterOp) uint32 {
 	return uint32(offset)
 }
 
-func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function) {
+func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function, stackpos int) {
 	var params []uint64
 	var results []uint64
 	if f.source.Kind == wasm.FunctionKindGoStackArgs {
-		paramCount := f.source.GoFunc.Type().NumIn()
+		paramCount := ce.stack.GetLen() - stackpos
 		results = wasm.CallGoFuncStackParams(f.source, ce.stack.GetTop(paramCount))
 	} else {
 		params = wasm.PopGoFuncParams(f.source, ce.popValue)

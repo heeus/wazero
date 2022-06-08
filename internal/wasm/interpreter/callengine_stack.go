@@ -11,6 +11,7 @@ type callStack interface {
 	Pick(opus int)
 	Swap(opus int)
 	GetTop(num int) []uint64
+	GetLen() int
 }
 
 // CallEngineStack s.e.
@@ -86,4 +87,8 @@ func (ces *callEngineStack) GetTop(num int) []uint64 {
 		return ces.stack[len(ces.stack)-num:]
 	}
 	return nil
+}
+
+func (ces *callEngineStack) GetLen() int {
+	return len(ces.stack)
 }
