@@ -1,4 +1,4 @@
-package interpreter
+package api
 
 // CallStack s.e.
 type CallStack interface {

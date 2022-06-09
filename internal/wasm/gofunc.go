@@ -83,11 +83,6 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 		results = make([]uint64, 0, tp.NumOut())
 	}
 
-	if f.Kind == FunctionKindGoStackArgs {
-		f.GoFunc.Call(nil)
-		return results
-	}
-
 	var in []reflect.Value
 	if tp.NumIn() != 0 {
 		in = make([]reflect.Value, tp.NumIn())
@@ -122,6 +117,7 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 			i++
 		}
 	}
+
 	// Execute the host function and push back the call result onto the stack.
 	for _, ret := range f.GoFunc.Call(in) {
 		switch ret.Kind() {
@@ -143,8 +139,7 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 func CallGoFuncStackParams(f *FunctionInstance, params []uint64) []uint64 {
 	var fp func([]uint64) []uint64
 	fp = f.GoFuncInstance.(func([]uint64) []uint64)
-	fp(params)
-	return nil
+	return fp(params)
 }
 
 func newContextVal(ctx context.Context) reflect.Value {

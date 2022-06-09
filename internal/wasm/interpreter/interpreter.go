@@ -86,7 +86,7 @@ type moduleEngine struct {
 type callEngine struct {
 	// stack contains the operands.
 	// Note that all the values are represented as uint64.
-	stack callStack
+	stack CallEngineStack
 
 	// frames are the function call stack.
 	frames []callFrame
@@ -129,7 +129,7 @@ func (ce *callEngine) getCtxTime() time.Time {
 }
 
 func newcallEngine() *callEngine {
-	return &callEngine{stack: newCallEngineStack()}
+	return &callEngine{stack: NewCallEngineStack()}
 }
 
 func (ce *callEngine) pushValue(v uint64) {
@@ -599,7 +599,7 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 		return nil, fmt.Errorf("expected %d params, but passed %d", len(paramSignature), paramCount)
 	}
 	ce := me.callEng
-	ce.reset()
+	ce.reset(0)
 	defer func() {
 		// If the module closed during the call, and the call didn't err for another reason, set an ExitError.
 		if err == nil {
@@ -623,9 +623,11 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 		if f.FunctionListener != nil {
 			ctx = f.FunctionListener.Before(ctx, params)
 		}
+
 		for _, param := range params {
 			ce.pushValue(param)
 		}
+
 		ce.opcounter = ce.getCtxCheckStep()
 		err = ce.callNativeFunc(ctx, m, compiled)
 		if nil != err {
@@ -662,8 +664,8 @@ func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm
 	return me.doCall(ctx, m, f, params...)
 }
 
-func (ce *callEngine) reset() {
-	ce.stack.Reset()
+func (ce *callEngine) reset(depth int) {
+	ce.stack.Reset(depth)
 	ce.frames = ce.frames[:0]
 	ce.opcounter = 0
 }
@@ -2014,10 +2016,4 @@ func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.Cal
 	for _, v := range results {
 		ce.pushValue(v)
 	}
-}
-
-// newCallEngineStack s.e.
-func newCallEngineStack() callStack {
-	ces := callEngineStack{}
-	return &ces
 }

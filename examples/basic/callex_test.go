@@ -41,7 +41,7 @@ func TestJustCall(t *testing.T) {
 	var callEngine api.ICallEngine
 	justCall := module.ExportedFunction("justCall")
 
-	ceCSP := api.CallEngineParams{0, 0}
+	ceCSP := api.CallEngineParams{}
 	_, err = justCall.CallEx(testCtx, callEngine, ceCSP)
 	require.Equal(t, err, nil)
 }
@@ -60,7 +60,7 @@ func TestFib_Duration(t *testing.T) {
 
 	for i := 0; i < 100; i++ {
 		num := uint64(i)
-		if _, err = fibonacci.CallEx(testCtx, nil, api.CallEngineParams{10 * time.Second, 0}, num); err != nil {
+		if _, err = fibonacci.CallEx(testCtx, nil, api.CallEngineParams{Duration: 10 * time.Second}, num); err != nil {
 			if nil != err {
 				break
 			}
@@ -85,7 +85,7 @@ func TestFib_GasLimit(t *testing.T) {
 	// Gaslimit 10
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {
 		num := uint64(num)
-		if _, err = fibonacci.CallEx(testCtx, nil, api.CallEngineParams{0, 10}, num); err != nil {
+		if _, err = fibonacci.CallEx(testCtx, nil, api.CallEngineParams{Gaslimit: 10}, num); err != nil {
 			if nil != err {
 				require.Equal(t, num, uint64(5))
 				break
@@ -97,7 +97,7 @@ func TestFib_GasLimit(t *testing.T) {
 	err = nil
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {
 		num := uint64(num)
-		if _, err = fibonacci.CallEx(testCtx, nil, api.CallEngineParams{0, 300}, num); err != nil {
+		if _, err = fibonacci.CallEx(testCtx, nil, api.CallEngineParams{Gaslimit: 300}, num); err != nil {
 			if nil != err {
 				require.Equal(t, num, uint64(10))
 				break
@@ -109,7 +109,7 @@ func TestFib_GasLimit(t *testing.T) {
 	err = nil
 	for _, num := range []int{5, 10, 20, 30, 50, 100} {
 		num := uint64(num)
-		if _, err = fibonacci.CallEx(testCtx, nil, api.CallEngineParams{0, 5000}, num); err != nil {
+		if _, err = fibonacci.CallEx(testCtx, nil, api.CallEngineParams{Gaslimit: 5000}, num); err != nil {
 			if nil != err {
 				require.Equal(t, num, uint64(20))
 				break
