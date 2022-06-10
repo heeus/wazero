@@ -94,6 +94,6 @@ func (ces *CallEngineStack) GetLen() int {
 }
 
 // NewCallEngineStack s.e.
-func NewCallEngineStack() CallEngineStack {
-	return CallEngineStack{}
+func NewCallEngineStack() *CallEngineStack {
+	return &CallEngineStack{}
 }

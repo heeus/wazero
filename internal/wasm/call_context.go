@@ -151,12 +151,26 @@ func (f *importedFn) Call(ctx context.Context, params ...uint64) (ret []uint64, 
 }
 
 // CallEx implements the same method as documented on api.Function with duration & gaslimit.
-func (f *importedFn) CallEx(ctx context.Context, ce api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (ret []uint64, ere error) {
+func (f *importedFn) CallEx(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, params ...uint64) (ret []uint64, ere error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	mod := f.importingModule
 	return f.importedFn.Module.Engine.CallEx(ctx, mod, f.importedFn, ce, ceParams, params...)
+}
+
+// CallExArg implements the same method as documented on api.Function with duration & gaslimit.
+func (f *importedFn) CallExArg(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, params []uint64) (ret []uint64, ere error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	mod := f.importingModule
+	return f.importedFn.Module.Engine.CallExArg(ctx, mod, f.importedFn, ce, ceParams, params)
+}
+
+// CallEx implements the same method as documented on api.Function with duration & gaslimit.
+func (f *importedFn) NewCallEngine() api.ICallEngine {
+	return f.importedFn.Module.Engine.NewCallEngine()
 }
 
 // ParamTypes implements the same method as documented on api.Function.
@@ -178,13 +192,27 @@ func (f *FunctionInstance) Call(ctx context.Context, params ...uint64) (ret []ui
 	return mod.Engine.Call(ctx, mod.CallCtx, f, params...)
 }
 
+func (f *FunctionInstance) NewCallEngine() api.ICallEngine {
+	mod := f.Module
+	return mod.Engine.NewCallEngine()
+}
+
 // CallEx implements the same method as documented on api.Function with duration & gaslimit.
-func (f *FunctionInstance) CallEx(ctx context.Context, ce api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (ret []uint64, ere error) {
+func (f *FunctionInstance) CallEx(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, params ...uint64) (ret []uint64, ere error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	mod := f.Module
 	return mod.Engine.CallEx(ctx, mod.CallCtx, f, ce, ceParams, params...)
+}
+
+// CallEx implements the same method as documented on api.Function with duration & gaslimit.
+func (f *FunctionInstance) CallExArg(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, params []uint64) (ret []uint64, ere error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	mod := f.Module
+	return mod.Engine.CallExArg(ctx, mod.CallCtx, f, ce, ceParams, params)
 }
 
 // ExportedGlobal implements the same method as documented on api.Module.

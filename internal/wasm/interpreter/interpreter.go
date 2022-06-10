@@ -86,7 +86,7 @@ type moduleEngine struct {
 type callEngine struct {
 	// stack contains the operands.
 	// Note that all the values are represented as uint64.
-	stack CallEngineStack
+	stack *CallEngineStack
 
 	// frames are the function call stack.
 	frames []callFrame
@@ -128,8 +128,8 @@ func (ce *callEngine) getCtxTime() time.Time {
 	return time.Now()
 }
 
-func newcallEngine() *callEngine {
-	return &callEngine{stack: NewCallEngineStack()}
+func newcallEngine() callEngine {
+	return callEngine{stack: NewCallEngineStack()}
 }
 
 func (ce *callEngine) pushValue(v uint64) {
@@ -644,23 +644,42 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 	return
 }
 
+// Call implements the same method as documented on wasm.NewCallEngine.
+func (me *moduleEngine) NewCallEngine() api.ICallEngine {
+	ce := newcallEngine()
+	return api.ICallEngine(&ce)
+}
+
 // Call implements the same method as documented on wasm.ModuleEngine.
 func (me *moduleEngine) Call(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, params ...uint64) (results []uint64, err error) {
-	me.callEng = newcallEngine()
+	ce := newcallEngine()
+	me.callEng = &ce
 	return me.doCall(ctx, m, f, params...)
 }
 
-// CallEx invokes a function instance f with pre-created callEngine parameter.
-func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, ce api.ICallEngine, ceParams api.CallEngineParams, params ...uint64) (results []uint64, err error) {
+func (me *moduleEngine) initcallEnging(ce api.ICallEngine, ceParams *api.CallEngineParams) {
 	if me.callEng == nil {
 		if ce == nil {
-			me.callEng = newcallEngine()
+			cenew := newcallEngine()
+			me.callEng = &cenew
 		} else {
 			me.callEng = ce.(*callEngine)
 		}
 	}
 	me.callEng = me.callEng.WithDuration(ceParams.Duration)
 	me.callEng = me.callEng.WithGasLimit(ceParams.Gaslimit)
+
+}
+
+// CallEx invokes a function instance f with pre-created callEngine parameter.
+func (me *moduleEngine) CallEx(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, ce api.ICallEngine, ceParams *api.CallEngineParams, params ...uint64) (results []uint64, err error) {
+	me.initcallEnging(ce, ceParams)
+	return me.doCall(ctx, m, f, params...)
+}
+
+// CallEx invokes a function instance f with pre-created callEngine parameter.
+func (me *moduleEngine) CallExArg(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, ce api.ICallEngine, ceParams *api.CallEngineParams, params []uint64) (results []uint64, err error) {
+	me.initcallEnging(ce, ceParams)
 	return me.doCall(ctx, m, f, params...)
 }
 

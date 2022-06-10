@@ -138,7 +138,13 @@ type Function interface {
 	Call(ctx context.Context, params ...uint64) ([]uint64, error)
 
 	// CallEx - the same as Call, but CallEngine and CallEngineParams are defined outside
-	CallEx(ctx context.Context, ce ICallEngine, ceParams CallEngineParams, params ...uint64) ([]uint64, error)
+	CallEx(ctx context.Context, ce ICallEngine, ceParams *CallEngineParams, params ...uint64) ([]uint64, error)
+
+	// CallExArg - the same as Call, but CallEngine and CallEngineParams are defined outside
+	CallExArg(ctx context.Context, ce ICallEngine, ceParams *CallEngineParams, params []uint64) ([]uint64, error)
+
+	// NewCallEngine s.e.
+	NewCallEngine() ICallEngine
 }
 
 // Global is a WebAssembly 1.0 (20191205) global exported from an instantiated module (wazero.Runtime InstantiateModule).

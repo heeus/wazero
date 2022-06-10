@@ -44,14 +44,14 @@ func Benchmark_hwazero_CallBackExParams(b *testing.B) {
 	defer module.Close(testCtxD)
 
 	callbackp := module.ExportedFunction("doCallbackp")
+	var ce api.ICallEngine = callbackp.NewCallEngine()
 	cep := api.CallEngineParams{Duration: 5 * time.Second, Gaslimit: 300}
-	var ce api.ICallEngine
 
 	var p1 uint64 = 14
 	var p2 uint64 = 15
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = callbackp.CallEx(testCtx, ce, cep, p1, p2)
+		_, err = callbackp.CallEx(testCtx, ce, &cep, p1, p2)
 		if nil != err {
 			break
 		}
@@ -61,26 +61,17 @@ func Benchmark_hwazero_CallBackExParams(b *testing.B) {
 
 func Benchmark_hwazero_fib20_CallExDuration(b *testing.B) {
 	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
-	require.NotNil(b, rtm)
 
-	var err error
-	module, err := rtm.InstantiateModuleFromCode(testCtxD, fibD)
-	require.NoError(b, err)
+	module, _ := rtm.InstantiateModuleFromCode(testCtxD, fibD)
 	defer module.Close(testCtxD)
 
 	fibonacci := module.ExportedFunction("fibonacci")
+	var ce api.ICallEngine = fibonacci.NewCallEngine()
 	cep := api.CallEngineParams{Duration: 10 * time.Second}
-	var ce api.ICallEngine
 
-	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		if _, err = fibonacci.CallEx(testCtxD, ce, cep, 20); err != nil {
-			if nil != err {
-				break
-			}
-		}
+		fibonacci.CallEx(testCtxD, ce, &cep, 1)
 	}
-	require.Nil(b, err)
 }
 
 func Benchmark_hwazero_fib20_CallDuration(b *testing.B) {
@@ -113,7 +104,7 @@ func Benchmark_hwazero_CallBackOldCall(b *testing.B) {
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
-		ExportFunction("callbackp", hcallbackSP).
+		ExportFunction("callbackp", hcallbackp).
 		ExportFunction("callbackp1", hcallbackSP).
 		ExportFunction("callback", hcallback).
 		Instantiate(testCtx)
@@ -125,11 +116,11 @@ func Benchmark_hwazero_CallBackOldCall(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtxD)
 
-	callback := module.ExportedFunction("doCallback")
+	callbackp := module.ExportedFunction("doCallbackp")
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = callback.Call(testCtx)
+		_, err = callbackp.Call(testCtx, 1, 2)
 		if nil != err {
 			break
 		}
@@ -146,7 +137,7 @@ func Benchmark_hwazero_JustCallOld(b *testing.B) {
 	host, err := rtm.NewModuleBuilder("env").
 		ExportFunction("callbackp", hcallbackSP).
 		ExportFunction("callbackp1", hcallbackSP).
-		ExportFunction("callback", hcallback).
+		ExportFunction("callback", hcallbackSP).
 		Instantiate(testCtx)
 
 	require.Nil(b, err)
@@ -177,7 +168,7 @@ func Benchmark_hwazero_JustCall(b *testing.B) {
 	host, err := rtm.NewModuleBuilder("env").
 		ExportFunction("callbackp", hcallbackp).
 		ExportFunction("callbackp1", hcallbackSP).
-		ExportFunction("callback", hcallback).
+		ExportFunction("callback", hcallbackSP).
 		Instantiate(testCtx)
 
 	require.Nil(b, err)
@@ -188,12 +179,12 @@ func Benchmark_hwazero_JustCall(b *testing.B) {
 	defer module.Close(testCtxD)
 
 	justCall := module.ExportedFunction("justCall")
-	var ce api.ICallEngine
+	var ce api.ICallEngine = justCall.NewCallEngine()
 	cep := api.CallEngineParams{}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = justCall.CallEx(testCtx, ce, cep)
+		_, err = justCall.CallEx(testCtx, ce, &cep)
 		if nil != err {
 			break
 		}
@@ -210,7 +201,7 @@ func Benchmark_hwazero_CallBackNoParam(b *testing.B) {
 	host, err := rtm.NewModuleBuilder("env").
 		ExportFunction("callbackp", hcallbackSP).
 		ExportFunction("callbackp1", hcallbackSP).
-		ExportFunction("callback", hcallback).
+		ExportFunction("callback", hcallbackSP).
 		Instantiate(testCtx)
 	defer host.Close(testCtx)
 
@@ -219,12 +210,12 @@ func Benchmark_hwazero_CallBackNoParam(b *testing.B) {
 	defer module.Close(testCtxD)
 
 	callback := module.ExportedFunction("doCallback")
-	var ce api.ICallEngine
+	var ce api.ICallEngine = callback.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = callback.CallEx(testCtx, ce, cnp)
+		_, err = callback.CallEx(testCtx, ce, &cnp)
 		if nil != err {
 			break
 		}
@@ -242,7 +233,7 @@ func Benchmark_hwazero_CallBack1Param(b *testing.B) {
 	host, err := rtm.NewModuleBuilder("env").
 		ExportFunction("callbackp", hcallbackSP).
 		ExportFunction("callbackp1", hcallbackSP).
-		ExportFunction("callback", hcallback).
+		ExportFunction("callback", hcallbackSP).
 		Instantiate(testCtx)
 
 	require.Nil(b, err)
@@ -253,12 +244,12 @@ func Benchmark_hwazero_CallBack1Param(b *testing.B) {
 	defer module.Close(testCtxD)
 
 	callbackp := module.ExportedFunction("doCallbackp1")
-	var ce api.ICallEngine
+	var ce api.ICallEngine = callbackp.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = callbackp.CallEx(testCtx, ce, cnp, 2, 3)
+		_, err = callbackp.CallEx(testCtx, ce, &cnp, 2, 3)
 		if nil != err {
 			break
 		}
@@ -266,7 +257,7 @@ func Benchmark_hwazero_CallBack1Param(b *testing.B) {
 	require.Nil(b, err)
 }
 
-func Benchmark_hwazero_CallBack3ParamOld(b *testing.B) {
+func Benchmark_hwazero_CallBack_3ParamOld(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
@@ -276,7 +267,7 @@ func Benchmark_hwazero_CallBack3ParamOld(b *testing.B) {
 	host, err := rtm.NewModuleBuilder("env").
 		ExportFunction("callbackp", hcallbackp).
 		ExportFunction("callbackp1", hcallbackSP).
-		ExportFunction("callback", hcallback).
+		ExportFunction("callback", hcallbackSP).
 		Instantiate(testCtx)
 
 	require.Nil(b, err)
@@ -297,6 +288,7 @@ func Benchmark_hwazero_CallBack3ParamOld(b *testing.B) {
 	}
 	require.Nil(b, err)
 }
+
 func Benchmark_hwazero_CallBack3Param(b *testing.B) {
 
 	hcallbaсkCount = 0
@@ -307,7 +299,7 @@ func Benchmark_hwazero_CallBack3Param(b *testing.B) {
 	host, err := rtm.NewModuleBuilder("env").
 		ExportFunction("callbackp", hcallbackSP).
 		ExportFunction("callbackp1", hcallbackSP).
-		ExportFunction("callback", hcallback).
+		ExportFunction("callback", hcallbackSP).
 		Instantiate(testCtx)
 
 	require.Nil(b, err)
@@ -318,18 +310,20 @@ func Benchmark_hwazero_CallBack3Param(b *testing.B) {
 	defer module.Close(testCtxD)
 
 	callbackp3 := module.ExportedFunction("doCallbackp")
-	var ce api.ICallEngine
+	var ce api.ICallEngine = callbackp3.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	b.ResetTimer()
+	args := []uint64{2, 3}
 	for i := 0; i < b.N; i++ {
-		_, err = callbackp3.CallEx(testCtx, ce, cnp, 2, 3)
+		_, err = callbackp3.CallExArg(testCtx, ce, &cnp, args)
 		if nil != err {
 			break
 		}
 	}
 	require.Nil(b, err)
 }
+
 func Benchmark_hwazero_PushPopStack(b *testing.B) {
 
 	hcallbaсkCount = 0
@@ -350,7 +344,7 @@ func hcallback() {
 }
 
 func hcallbackp(i int32, j int32, k int32) {
-	hcallbaсkCount = hcallbaсkCount + uint64(i) + uint64(j)
+	hcallbaсkCount = hcallbaсkCount + uint64(i) + uint64(j) + uint64(k)
 }
 
 func hcallbackSP(pars []uint64) []uint64 {
