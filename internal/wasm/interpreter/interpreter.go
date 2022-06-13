@@ -666,9 +666,12 @@ func (me *moduleEngine) initcallEnging(ce api.ICallEngine, ceParams *api.CallEng
 			me.callEng = ce.(*callEngine)
 		}
 	}
+	if ceParams == nil {
+		ceParams = &api.CallEngineParams{}
+		return
+	}
 	me.callEng = me.callEng.WithDuration(ceParams.Duration)
 	me.callEng = me.callEng.WithGasLimit(ceParams.Gaslimit)
-
 }
 
 // CallEx invokes a function instance f with pre-created callEngine parameter.
@@ -734,7 +737,9 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 		opcounter--
 		if opcounter == 0 {
 			opcounter = limitCheckStep
-			if opdur > 0 && timefunc().Sub(startTime) > opdur {
+			currenttime := timefunc()
+			timedif := currenttime.Sub(startTime)
+			if opdur > 0 && timedif > opdur {
 				return api.ErrDuration
 			}
 			if nil != ctx {

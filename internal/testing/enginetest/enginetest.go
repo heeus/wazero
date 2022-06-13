@@ -146,7 +146,7 @@ func RunTestEngine_NewModuleEngine_InitTable(t *testing.T, et EngineTester) {
 		require.NoError(t, err)
 
 		moduleFunctions := []*wasm.FunctionInstance{
-			get(m, 0, nil),
+			getFunctionInstance(m, 0, nil),
 			getFunctionInstance(m, 1, nil),
 			getFunctionInstance(m, 2, nil),
 			getFunctionInstance(m, 3, nil),

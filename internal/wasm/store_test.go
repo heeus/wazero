@@ -404,6 +404,10 @@ func (e *mockModuleEngine) Name() string {
 	return e.name
 }
 
+func (e *mockModuleEngine) NewCallEngine() api.ICallEngine {
+	return e.NewCallEngine()
+}
+
 // Call implements the same method as documented on wasm.ModuleEngine.
 func (e *mockModuleEngine) Call(ctx context.Context, callCtx *CallContext, f *FunctionInstance, _ ...uint64) (results []uint64, err error) {
 	if e.callFailIndex >= 0 && f.Idx == Index(e.callFailIndex) {
