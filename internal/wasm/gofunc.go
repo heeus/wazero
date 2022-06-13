@@ -34,7 +34,6 @@ const (
 
 var moduleType = reflect.TypeOf((*api.Module)(nil)).Elem()
 var goContextType = reflect.TypeOf((*context.Context)(nil)).Elem()
-var hfuncType = reflect.TypeOf((*api.StackParamFuncType)(nil)).Elem()
 var errorType = reflect.TypeOf((*error)(nil)).Elem()
 
 // PopGoFuncParams pops the correct number of parameters off the stack into a parameter slice for use in CallGoFunc
@@ -137,8 +136,7 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 }
 
 func CallGoFuncStackParams(f *FunctionInstance, params []uint64) []uint64 {
-	var fp func([]uint64) []uint64
-	fp = f.GoFuncInstance.(func([]uint64) []uint64)
+	var fp func([]uint64) []uint64 = f.GoFuncInstance.(func([]uint64) []uint64)
 	return fp(params)
 }
 

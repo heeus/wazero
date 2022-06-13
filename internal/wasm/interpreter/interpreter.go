@@ -666,12 +666,10 @@ func (me *moduleEngine) initcallEnging(ce api.ICallEngine, ceParams *api.CallEng
 			me.callEng = ce.(*callEngine)
 		}
 	}
-	if ceParams == nil {
-		ceParams = &api.CallEngineParams{}
-		return
+	if ceParams != nil {
+		me.callEng = me.callEng.WithDuration(ceParams.Duration)
+		me.callEng = me.callEng.WithGasLimit(ceParams.Gaslimit)
 	}
-	me.callEng = me.callEng.WithDuration(ceParams.Duration)
-	me.callEng = me.callEng.WithGasLimit(ceParams.Gaslimit)
 }
 
 // CallEx invokes a function instance f with pre-created callEngine parameter.

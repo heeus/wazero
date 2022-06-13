@@ -1,10 +1,13 @@
 package bench
 
 import (
+	"context"
 	"testing"
 
 	"github.com/heeus/wazero/internal/wasm"
 )
+
+var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func BenchmarkMemory(b *testing.B) {
 	var mem = &wasm.MemoryInstance{Buffer: make([]byte, wasm.MemoryPageSize), Min: 1}
