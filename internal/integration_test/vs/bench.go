@@ -19,15 +19,6 @@ var ensureCompilerFastest = "false"
 
 const compilerRuntime = "wazero-compiler"
 
-func runCallBenchmark(rt Runtime, rtCfg *RuntimeConfig, call func(Module) error) float64 {
-	result := testing.Benchmark(func(b *testing.B) {
-		benchmarkCall(b, rt, rtCfg, call)
-	})
-	// https://github.com/golang/go/blob/fd09e88722e0af150bf8960e95e8da500ad91001/src/testing/benchmark.go#L428-L432
-	nsOp := float64(result.T.Nanoseconds()) / float64(result.N)
-	return nsOp
-}
-
 func benchmark(b *testing.B, runtime func() Runtime, rtCfg *RuntimeConfig, call func(Module) error) {
 	rt := runtime()
 	b.Run("Compile", func(b *testing.B) {
