@@ -26,6 +26,11 @@ func init() {
 	}
 }
 
+func factorialCall(m Module) error {
+	_, err := m.CallI64_I64(testCtx, "fac-ssa", factorialParam)
+	return err
+}
+
 func RunTestFactorial(t *testing.T, runtime func() Runtime) {
 	testCall(t, runtime, factorialConfig, testFactorialCall)
 }
@@ -34,4 +39,8 @@ func testFactorialCall(t *testing.T, m Module, instantiation, iteration int) {
 	res, err := m.CallI64_I64(testCtx, "fac-ssa", factorialParam)
 	require.NoError(t, err, "instantiation[%d] iteration[%d] failed", instantiation, iteration)
 	require.Equal(t, factorialResult, res)
+}
+
+func RunBenchmarkFactorial(b *testing.B, runtime func() Runtime) {
+	benchmark(b, runtime, factorialConfig, factorialCall)
 }

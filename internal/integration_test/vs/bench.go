@@ -13,6 +13,88 @@ import (
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
+// ensureCompilerFastest is overridable via ldflags. Ex.
+//	-ldflags '-X github.com/tetratelabs/wazero/internal/integration_test/vs.ensureCompilerFastest=true'
+var ensureCompilerFastest = "false"
+
+const compilerRuntime = "wazero-compiler"
+
+func runCallBenchmark(rt Runtime, rtCfg *RuntimeConfig, call func(Module) error) float64 {
+	result := testing.Benchmark(func(b *testing.B) {
+		benchmarkCall(b, rt, rtCfg, call)
+	})
+	// https://github.com/golang/go/blob/fd09e88722e0af150bf8960e95e8da500ad91001/src/testing/benchmark.go#L428-L432
+	nsOp := float64(result.T.Nanoseconds()) / float64(result.N)
+	return nsOp
+}
+
+func benchmark(b *testing.B, runtime func() Runtime, rtCfg *RuntimeConfig, call func(Module) error) {
+	rt := runtime()
+	b.Run("Compile", func(b *testing.B) {
+		benchmarkCompile(b, rt, rtCfg)
+	})
+	b.Run("Instantiate", func(b *testing.B) {
+		benchmarkInstantiate(b, rt, rtCfg)
+	})
+
+	// Don't burn CPU when this is already going to be called in runTestBenchmark_Call_CompilerFastest
+	if ensureCompilerFastest != "true" || rt.Name() == compilerRuntime {
+		b.Run("Call", func(b *testing.B) {
+			benchmarkCall(b, rt, rtCfg, call)
+		})
+	}
+}
+
+func benchmarkCompile(b *testing.B, rt Runtime, rtCfg *RuntimeConfig) {
+	for i := 0; i < b.N; i++ {
+		if err := rt.Compile(testCtx, rtCfg); err != nil {
+			b.Fatal(err)
+		}
+		if err := rt.Close(testCtx); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func benchmarkInstantiate(b *testing.B, rt Runtime, rtCfg *RuntimeConfig) {
+	// Compile outside the benchmark loop
+	if err := rt.Compile(testCtx, rtCfg); err != nil {
+		b.Fatal(err)
+	}
+	defer rt.Close(testCtx)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		mod, err := rt.Instantiate(testCtx, rtCfg)
+		if err != nil {
+			b.Fatal(err)
+		}
+		err = mod.Close(testCtx)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func benchmarkCall(b *testing.B, rt Runtime, rtCfg *RuntimeConfig, call func(Module) error) {
+	// Initialize outside the benchmark loop
+	if err := rt.Compile(testCtx, rtCfg); err != nil {
+		b.Fatal(err)
+	}
+	defer rt.Close(testCtx)
+	mod, err := rt.Instantiate(testCtx, rtCfg)
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer mod.Close(testCtx)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if err := call(mod); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
 func testCall(t *testing.T, runtime func() Runtime, rtCfg *RuntimeConfig, testCall func(*testing.T, Module, int, int)) {
 	rt := runtime()
 	err := rt.Compile(testCtx, rtCfg)

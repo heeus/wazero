@@ -68,3 +68,7 @@ func testAllocationCall(t *testing.T, m Module, instantiation, iteration int) {
 	err := allocationCall(m)
 	require.NoError(t, err, "instantiation[%d] iteration[%d] failed: %v", instantiation, iteration, err)
 }
+
+func RunBenchmarkAllocation(b *testing.B, runtime func() Runtime) {
+	benchmark(b, runtime, allocationConfig, allocationCall)
+}
