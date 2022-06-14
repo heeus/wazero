@@ -1,6 +1,7 @@
 ## Bench tests result with different functions 
 
 #### Classic wazero Function.Call()
+```
 goos: windows
 goarch: amd64
 pkg: github.com/heeus/wazero/examples/basic
@@ -12,8 +13,10 @@ Benchmark_hwazero_Old_fib20_CallDuration-16    	     732	   1583838 ns/op	    16
 Benchmark_hwazero_Old_Root-16                  	    4783	    212055 ns/op	     433 B/op	      10 allocs/op
 PASS
 ok  	github.com/heeus/wazero/examples/basic	7.130s
+```
 
 #### Function.CallEx(), parameters to Host Go function are passed over stack
+```
 goos: windows
 goarch: amd64
 pkg: github.com/heeus/wazero/examples/basic
@@ -27,9 +30,11 @@ Benchmark_hwazero_CallEx_fib20_Duration-16      	     724	   1601860 ns/op	     
 Benchmark_hwazero_CallEx_Root-16                	    5594	    235434 ns/op	      31 B/op	       2 allocs/op
 PASS
 ok  	github.com/heeus/wazero/examples/basic	9.070s
-
+```
 
 #### Function.CallExArg(), parameters to WASM function are passed in array of uint64
+
+```
 goos: windows
 goarch: amd64
 pkg: github.com/heeus/wazero/examples/basic
@@ -42,3 +47,4 @@ Benchmark_hwazero_Arg_fib20-16              	     750	   1562258 ns/op	     112 
 Benchmark_hwazero_Arg_Root-16               	    5191	    211228 ns/op	      24 B/op	       1 allocs/op
 PASS
 ok  	github.com/heeus/wazero/examples/basic	7.265s
+```
