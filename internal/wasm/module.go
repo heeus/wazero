@@ -915,10 +915,10 @@ func SectionIDName(sectionID SectionID) string {
 type ValueType = api.ValueType
 
 const (
-	ValueTypeI32 = api.ValueTypeI32
-	ValueTypeI64 = api.ValueTypeI64
-	ValueTypeF32 = api.ValueTypeF32
-	ValueTypeF64 = api.ValueTypeF64
+	ValueTypeI32   = api.ValueTypeI32
+	ValueTypeI64   = api.ValueTypeI64
+	ValueTypeF32   = api.ValueTypeF32
+	ValueTypeF64   = api.ValueTypeF64
 	ValueTypeSlice = api.ValueTypeSlice
 )
 

@@ -46,9 +46,9 @@ const (
 	ValueTypeF32 ValueType = 0x7d
 	// ValueTypeF64 is a 32-bit floating point number.
 	ValueTypeF64 ValueType = 0x7c
-	// ValueTypeSlice is a clise of uint64
-	ValueTypeSlice ValueType = 0x17
 )
+
+const ValueTypeSlice ValueType = 0x17
 
 // ValueTypeName returns the type name of the given ValueType as a string.
 // These type names match the names used in the WebAssembly text format.
