@@ -12,7 +12,8 @@ import (
 func Benchmark_hwazero_Arg_JustCall(b *testing.B) {
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
+	rtc := wazero.NewRuntimeConfigInterpreter().WithMemoryLimitPages(2)
+	rtm := wazero.NewRuntimeWithConfig(rtc)
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -21,6 +22,8 @@ func Benchmark_hwazero_Arg_JustCall(b *testing.B) {
 		ExportFunction("callback", hcallbackSP).
 		Instantiate(testCtx)
 
+	m := host.Memory()
+	require.Nil(b, m)
 	require.Nil(b, err)
 	defer host.Close(testCtx)
 
@@ -29,6 +32,8 @@ func Benchmark_hwazero_Arg_JustCall(b *testing.B) {
 	defer module.Close(testCtx)
 
 	justCall := module.ExportedFunction("justCall")
+	mm := host.Memory()
+	require.Nil(b, mm)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
