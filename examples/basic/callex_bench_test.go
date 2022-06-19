@@ -30,12 +30,12 @@ func Benchmark_hwazero_CallEx_JustCall(b *testing.B) {
 	defer module.Close(testCtx)
 
 	justCall := module.ExportedFunction("justCall")
-	var ce api.ICallEngine = justCall.NewCallEngine()
+	//var ce api.ICallEngine = justCall.NewCallEngine()
 	cep := api.CallEngineParams{}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, err = justCall.CallEx(testCtx, ce, &cep)
+		_, err = justCall.CallEx(testCtx, nil, &cep)
 		if nil != err {
 			break
 		}

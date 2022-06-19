@@ -110,7 +110,9 @@ func (ce *callEngine) WithGasLimit(gaslimit uint64) *callEngine {
 // WithDuration sets duration limit
 func (ce *callEngine) WithDuration(duration time.Duration) *callEngine {
 	ce.duration = duration
-	ce.startTime = ce.getCtxTime()
+	if duration > 0 {
+		ce.startTime = ce.getCtxTime()
+	}
 	return ce
 }
 
@@ -735,10 +737,12 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 		opcounter--
 		if opcounter == 0 {
 			opcounter = limitCheckStep
-			currenttime := timefunc()
-			timedif := currenttime.Sub(startTime)
-			if opdur > 0 && timedif > opdur {
-				return api.ErrDuration
+			if opdur > 0 {
+				currenttime := timefunc()
+				timedif := currenttime.Sub(startTime)
+				if timedif > opdur {
+					return api.ErrDuration
+				}
 			}
 			if nil != ctx {
 				if nil != ctx {

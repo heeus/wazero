@@ -22,8 +22,6 @@ func Benchmark_hwazero_Arg_JustCall(b *testing.B) {
 		ExportFunction("callback", hcallbackSP).
 		Instantiate(testCtx)
 
-	m := host.Memory()
-	require.Nil(b, m)
 	require.Nil(b, err)
 	defer host.Close(testCtx)
 
@@ -32,8 +30,6 @@ func Benchmark_hwazero_Arg_JustCall(b *testing.B) {
 	defer module.Close(testCtx)
 
 	justCall := module.ExportedFunction("justCall")
-	mm := host.Memory()
-	require.Nil(b, mm)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

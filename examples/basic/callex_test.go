@@ -152,3 +152,10 @@ func Benchmark_hwazero_PushPopStack(b *testing.B) {
 		s.PopValue()
 	}
 }
+
+func Benchmark_hwazero_TimeNow(b *testing.B) {
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		time.Now()
+	}
+}
