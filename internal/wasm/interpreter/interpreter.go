@@ -753,7 +753,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				}
 			}
 			if callgaslimit > 0 {
-				if callopgas >= callgaslimit {
+				if callopgas > callgaslimit {
 					return api.ErrGasLimit
 				}
 			}
