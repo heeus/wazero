@@ -86,7 +86,7 @@ type moduleEngine struct {
 type callEngine struct {
 	// stack contains the operands.
 	// Note that all the values are represented as uint64.
-	stack *CallEngineStack
+	stack *callEngineStack
 
 	// frames are the function call stack.
 	frames []callFrame

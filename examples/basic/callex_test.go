@@ -138,21 +138,6 @@ func TestCallGoFunc2Params(t *testing.T) {
 	require.Equal(t, hcallbaсkCount, uint64(45))
 }
 
-func Benchmark_hwazero_PushPopStack(b *testing.B) {
-
-	hcallbaсkCount = 0
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
-	require.NotNil(b, rtm)
-
-	s := api.NewCallEngineStack()
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		s.PushValue(5)
-		s.PopValue()
-	}
-}
-
 func Benchmark_hwazero_TimeNow(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {

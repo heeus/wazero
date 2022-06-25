@@ -1,7 +1,7 @@
 package interpreter
 
 // CallStack s.e.
-type CallStack interface {
+type callStack interface {
 	// Operations with stack
 	PushValue(v uint64)
 	PopValue() (v uint64)
@@ -14,18 +14,18 @@ type CallStack interface {
 	GetLen() int
 }
 
-// CallEngineStack s.e.
-type CallEngineStack struct {
+// callEngineStack s.e.
+type callEngineStack struct {
 	// stack contains the operands.
 	// Note that all the values are represented as uint64.
 	stack []uint64
 }
 
-func (ces *CallEngineStack) PushValue(v uint64) {
+func (ces *callEngineStack) PushValue(v uint64) {
 	ces.stack = append(ces.stack, v)
 }
 
-func (ces *CallEngineStack) PopValue() (v uint64) {
+func (ces *callEngineStack) PopValue() (v uint64) {
 	// No need to check stack bound
 	// as we can assume that all the operations
 	// are valid thanks to validateFunction
@@ -39,7 +39,7 @@ func (ces *CallEngineStack) PopValue() (v uint64) {
 }
 
 // PeekValues peeks api.ValueType values from the stack and returns them in reverse order.
-func (ces *CallEngineStack) PeekValues(count int) []uint64 {
+func (ces *callEngineStack) PeekValues(count int) []uint64 {
 	if count == 0 {
 		return nil
 	}
@@ -52,7 +52,7 @@ func (ces *CallEngineStack) PeekValues(count int) []uint64 {
 	return values
 }
 
-func (ces *CallEngineStack) Drop(rangeStart int, rangeEnd int) {
+func (ces *callEngineStack) Drop(rangeStart int, rangeEnd int) {
 	// No need to check stack bound
 	// as we can assume that all the operations
 	// are valid thanks to validateFunction
@@ -68,20 +68,20 @@ func (ces *CallEngineStack) Drop(rangeStart int, rangeEnd int) {
 	}
 }
 
-func (ces *CallEngineStack) Reset(depth int) {
+func (ces *callEngineStack) Reset(depth int) {
 	ces.stack = ces.stack[:depth]
 }
 
-func (ces *CallEngineStack) Pick(opus int) {
+func (ces *callEngineStack) Pick(opus int) {
 	ces.PushValue(ces.stack[len(ces.stack)-1-opus])
 }
 
-func (ces *CallEngineStack) Swap(opus int) {
+func (ces *callEngineStack) Swap(opus int) {
 	index := len(ces.stack) - 1 - opus
 	ces.stack[len(ces.stack)-1], ces.stack[index] = ces.stack[index], ces.stack[len(ces.stack)-1]
 }
 
-func (ces *CallEngineStack) GetTop(num int) []uint64 {
+func (ces *callEngineStack) GetTop(num int) []uint64 {
 	l := len(ces.stack)
 	if l > num {
 		return ces.stack[len(ces.stack)-num:]
@@ -89,11 +89,11 @@ func (ces *CallEngineStack) GetTop(num int) []uint64 {
 	return nil
 }
 
-func (ces *CallEngineStack) GetLen() int {
+func (ces *callEngineStack) GetLen() int {
 	return len(ces.stack)
 }
 
 // NewCallEngineStack s.e.
-func NewCallEngineStack() *CallEngineStack {
-	return &CallEngineStack{}
+func NewCallEngineStack() *callEngineStack {
+	return &callEngineStack{}
 }
