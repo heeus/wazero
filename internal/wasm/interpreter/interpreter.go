@@ -584,12 +584,12 @@ func (me *moduleEngine) CreateFuncElementInstance(indexes []*wasm.Index) *wasm.E
 }
 
 // Call implements the same method as documented on wasm.ModuleEngine.
-func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm.FunctionInstance, params ...uint64) (results []uint64, err error) {
+func (me *moduleEngine) doCall(ctx context.Context, callCtx *wasm.CallContext, f *wasm.FunctionInstance, params ...uint64) (results []uint64, err error) {
 	// Note: The input parameters are pre-validated, so a compiled function is only absent on close. Updates to
 	// code on close aren't locked, neither is this read.
 	compiled := me.functions[f.Idx]
 	if compiled == nil { // Lazy check the cause as it could be because the module was already closed.
-		if err = m.FailIfClosed(); err == nil {
+		if err = callCtx.FailIfClosed(); err == nil {
 			panic(fmt.Errorf("BUG: %s.codes[%d] was nil before close", me.name, f.Idx))
 		}
 		return
@@ -597,15 +597,17 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 
 	paramSignature := f.Type.Params
 	paramCount := len(params)
-	if len(paramSignature) != paramCount {
-		return nil, fmt.Errorf("expected %d params, but passed %d", len(paramSignature), paramCount)
+	if f.Kind != wasm.FunctionKindGoStackArgs {
+		if len(paramSignature) != paramCount {
+			return nil, fmt.Errorf("expected %d params, but passed %d", len(paramSignature), paramCount)
+		}
 	}
 	ce := me.callEng
 	ce.reset(0)
 	defer func() {
 		// If the module closed during the call, and the call didn't err for another reason, set an ExitError.
 		if err == nil {
-			err = m.FailIfClosed()
+			err = callCtx.FailIfClosed()
 		}
 		// TODO: ^^ Will not fail if the function was imported from a closed module.
 
@@ -631,7 +633,7 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 		}
 
 		ce.opcounter = ce.getCtxCheckStep()
-		err = ce.callNativeFunc(ctx, m, compiled)
+		err = ce.callNativeFunc(ctx, callCtx, compiled)
 		if nil != err {
 			return
 		}
@@ -640,8 +642,14 @@ func (me *moduleEngine) doCall(ctx context.Context, m *wasm.CallContext, f *wasm
 			// TODO: This doesn't get the error due to use of panic to propagate them.
 			f.FunctionListener.After(ctx, nil, results)
 		}
+	} else if f.Kind == wasm.FunctionKindGoStackArgs {
+		stackpos := ce.stack.GetLen()
+		for _, param := range params {
+			ce.pushValue(param)
+		}
+		results = ce.callGoFuncWithStack(ctx, callCtx, compiled, stackpos)
 	} else {
-		results = ce.callGoFunc(ctx, m, compiled, params)
+		results = ce.callGoFunc(ctx, callCtx, compiled, params)
 	}
 	return
 }
@@ -2029,7 +2037,7 @@ func (ce *callEngine) popMemoryOffset(op *interpreterOp) uint32 {
 	return uint32(offset)
 }
 
-func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function, stackpos int) {
+func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function, stackpos int) []uint64 {
 	var params []uint64
 	var results []uint64
 	if f.source.Kind == wasm.FunctionKindGoStackArgs {
@@ -2038,8 +2046,9 @@ func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.Cal
 	} else {
 		params = wasm.PopGoFuncParams(f.source, ce.popValue)
 		results = ce.callGoFunc(ctx, callCtx, f, params)
+		for _, v := range results {
+			ce.pushValue(v)
+		}
 	}
-	for _, v := range results {
-		ce.pushValue(v)
-	}
+	return results
 }

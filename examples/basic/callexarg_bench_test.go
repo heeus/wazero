@@ -173,3 +173,62 @@ func Benchmark_hwazero_Arg_Root(b *testing.B) {
 		root.CallExArg(testCtx, ce, &cep, par)
 	}
 }
+
+func Benchmark_hwazero_Old_Add2Param(b *testing.B) {
+	var err error
+	rtm := wazero.NewRuntime()
+	require.NotNil(b, rtm)
+
+	module, err := rtm.NewModuleBuilder("host/math").
+		ExportFunction("add", func(v1, v2 uint32) uint32 {
+			return v1 + v2
+		}).Instantiate(testCtx)
+
+	require.Nil(b, err)
+	defer module.Close(testCtx)
+
+	add := module.ExportedFunction("add")
+	var ce api.ICallEngine = add.NewCallEngine()
+	cnp := api.CallEngineParams{}
+
+	var res []uint64
+	b.ResetTimer()
+	args := []uint64{12, 14}
+	for i := 0; i < b.N; i++ {
+		res, err = add.CallExArg(testCtx, ce, &cnp, args)
+
+	}
+	require.Equal(b, res[0], uint64(26))
+	require.Nil(b, err)
+}
+
+func Benchmark_hwazero_Arg_AddParam(b *testing.B) {
+	var err error
+	rtm := wazero.NewRuntime()
+	require.NotNil(b, rtm)
+
+	module, err := rtm.NewModuleBuilder("host/math").
+		ExportFunction("add", func(pars []uint64) (res []uint64) {
+			var r uint64
+			for i := 0; i < len(pars); i++ {
+				r = r + pars[i]
+			}
+			return []uint64{r}
+		}).Instantiate(testCtx)
+
+	require.Nil(b, err)
+	defer module.Close(testCtx)
+
+	add := module.ExportedFunction("add")
+	var ce api.ICallEngine = add.NewCallEngine()
+	cnp := api.CallEngineParams{}
+
+	var res []uint64
+	b.ResetTimer()
+	args := []uint64{12, 14}
+	for i := 0; i < b.N; i++ {
+		res, err = add.CallExArg(testCtx, ce, &cnp, args)
+	}
+	require.Equal(b, res[0], uint64(26))
+	require.Nil(b, err)
+}

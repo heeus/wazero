@@ -1,19 +1,5 @@
 package interpreter
 
-// CallStack s.e.
-type CallStack interface {
-	// Operations with stack
-	PushValue(v uint64)
-	PopValue() (v uint64)
-	PeekValues(count int) []uint64
-	Drop(rangeStart int, rangeEnd int)
-	Reset(depth int)
-	Pick(opus int)
-	Swap(opus int)
-	GetTop(num int) []uint64
-	GetLen() int
-}
-
 // callEngineStack s.e.
 type callEngineStack struct {
 	// stack contains the operands.
@@ -83,7 +69,7 @@ func (ces *callEngineStack) Swap(opus int) {
 
 func (ces *callEngineStack) GetTop(num int) []uint64 {
 	l := len(ces.stack)
-	if l > num {
+	if l >= num {
 		return ces.stack[len(ces.stack)-num:]
 	}
 	return nil
