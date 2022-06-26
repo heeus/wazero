@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/heeus/wazero/api"
 	"github.com/heeus/wazero/internal/testing/require"
 )
 
@@ -60,12 +61,46 @@ func allocationCall(m Module) error {
 	return m.CallI32_V(testCtx, "free", namePtr)
 }
 
+func allocationCallEx(m Module, ce api.ICallEngine, ceParams *api.CallEngineParams) error {
+	nameSize := uint32(len(allocationParam))
+	// Instead of an arbitrary memory offset, use Rust's allocator. Notice
+	// there is nothing string-specific in this allocation function. The same
+	// function could be used to pass binary serialized data to Wasm.
+	namePtr, err := m.CallI32_I32Ex(testCtx, ce, ceParams, "malloc", nameSize)
+	if err != nil {
+		return err
+	}
+
+	// The pointer is a linear memory offset, which is where we write the name.
+	if err = m.WriteMemory(testCtx, namePtr, []byte(allocationParam)); err != nil {
+		return err
+	}
+
+	// Now, we can call "greet", which reads the string we wrote to memory!
+	if err = m.CallI32I32_VEx(testCtx, ce, ceParams, "greet", namePtr, nameSize); err != nil {
+		return err
+	}
+
+	// This pointer was allocated by Rust, but owned by Go, So, we have to
+	// deallocate it when finished
+	return m.CallI32_VEx(testCtx, ce, ceParams, "free", namePtr)
+}
+
 func RunTestAllocation(t *testing.T, runtime func() Runtime) {
 	testCall(t, runtime, allocationConfig, testAllocationCall)
 }
 
+func RunTestAllocationEx(t *testing.T, runtime func() Runtime) {
+	testCallEx(t, runtime, allocationConfig, testAllocationCallEx)
+}
+
 func testAllocationCall(t *testing.T, m Module, instantiation, iteration int) {
 	err := allocationCall(m)
+	require.NoError(t, err, "instantiation[%d] iteration[%d] failed: %v", instantiation, iteration, err)
+}
+
+func testAllocationCallEx(t *testing.T, m Module, ce api.ICallEngine, ceParams *api.CallEngineParams, instantiation, iteration int) {
+	err := allocationCallEx(m, ce, ceParams)
 	require.NoError(t, err, "instantiation[%d] iteration[%d] failed: %v", instantiation, iteration, err)
 }
 

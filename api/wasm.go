@@ -137,10 +137,10 @@ type Function interface {
 	// function that exits.
 	Call(ctx context.Context, params ...uint64) ([]uint64, error)
 
-	// CallEx - the same as Call, but CallEngine and CallEngineParams are defined outside
+	// CallEx - the same as Call, CallEngine is defined outside, CallEngineParams defines Duration and Gas Limit
 	CallEx(ctx context.Context, ce ICallEngine, ceParams *CallEngineParams, params ...uint64) ([]uint64, error)
 
-	// CallExArg - the same as Call, but CallEngine and CallEngineParams are defined outside
+	// CallEx - the same as Call, CallEngine is defined outside, CallEngineParams defines Duration and Gas Limit, parameters are passed in slice
 	CallExArg(ctx context.Context, ce ICallEngine, ceParams *CallEngineParams, params []uint64) ([]uint64, error)
 
 	// NewCallEngine s.e.

@@ -12,6 +12,10 @@ func TestAllocation(t *testing.T) {
 	vs.RunTestAllocation(t, runtime)
 }
 
+func TestAllocationEx(t *testing.T) {
+	vs.RunTestAllocationEx(t, runtime)
+}
+
 func TestFactorial(t *testing.T) {
 	vs.RunTestFactorial(t, runtime)
 }
