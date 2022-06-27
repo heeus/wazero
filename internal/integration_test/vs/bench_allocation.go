@@ -99,9 +99,9 @@ func testAllocationCall(t *testing.T, m Module, instantiation, iteration int) {
 	require.NoError(t, err, "instantiation[%d] iteration[%d] failed: %v", instantiation, iteration, err)
 }
 
-func testAllocationCallEx(t *testing.T, m Module, ce api.ICallEngine, ceParams *api.CallEngineParams, instantiation, iteration int) {
+func testAllocationCallEx(t *testing.T, m Module, ce api.ICallEngine, ceParams *api.CallEngineParams, pars []uint64) {
 	err := allocationCallEx(m, ce, ceParams)
-	require.NoError(t, err, "instantiation[%d] iteration[%d] failed: %v", instantiation, iteration, err)
+	require.NoError(t, err, "instantiation[%d] iteration[%d] failed: %v", pars[0], pars[1], err)
 }
 
 func RunBenchmarkAllocation(b *testing.B, runtime func() Runtime) {

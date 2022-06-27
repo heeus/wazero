@@ -107,7 +107,8 @@ func testCall(t *testing.T, runtime func() Runtime, rtCfg *RuntimeConfig, testCa
 	}
 }
 
-func testCallEx(t *testing.T, runtime func() Runtime, rtCfg *RuntimeConfig, tCallEx func(*testing.T, Module, api.ICallEngine, *api.CallEngineParams, int, int)) {
+func testCallEx(t *testing.T, runtime func() Runtime, rtCfg *RuntimeConfig,
+	tCallEx func(*testing.T, Module, api.ICallEngine, *api.CallEngineParams, []uint64)) {
 	rt := runtime()
 	err := rt.Compile(testCtx, rtCfg)
 	require.NoError(t, err)
@@ -116,13 +117,16 @@ func testCallEx(t *testing.T, runtime func() Runtime, rtCfg *RuntimeConfig, tCal
 	ceParams := api.CallEngineParams{}
 
 	// Ensure the module can be re-instantiated times, even if not all runtimes allow renaming.
+	par := []uint64{0, 0}
 	for i := 0; i < 10; i++ {
 		m, err := rt.Instantiate(testCtx, rtCfg)
 		require.NoError(t, err)
 
+		par[0] = uint64(i)
 		// Large loop in test is only to show the function is stable (ex doesn't leak or crash on Nth use).
 		for j := 0; j < 1000; j++ {
-			tCallEx(t, m, nil, &ceParams, i, j)
+			par[1] = uint64(j)
+			tCallEx(t, m, nil, &ceParams, par)
 		}
 
 		require.NoError(t, m.Close(testCtx))

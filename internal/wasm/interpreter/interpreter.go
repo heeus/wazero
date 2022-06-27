@@ -677,8 +677,12 @@ func (me *moduleEngine) initcallEnging(ce api.ICallEngine, ceParams *api.CallEng
 		}
 	}
 	if ceParams != nil {
-		me.callEng = me.callEng.WithDuration(ceParams.Duration)
-		me.callEng = me.callEng.WithGasLimit(ceParams.Gaslimit)
+		if ceParams.Duration > 0 {
+			me.callEng = me.callEng.WithDuration(ceParams.Duration)
+		}
+		if ceParams.Gaslimit > 0 {
+			me.callEng = me.callEng.WithGasLimit(ceParams.Gaslimit)
+		}
 	}
 }
 
