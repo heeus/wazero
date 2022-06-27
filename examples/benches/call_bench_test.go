@@ -38,6 +38,7 @@ func Benchmark_hwazero_Old_JustCall(b *testing.B) {
 	}
 	require.Nil(b, err)
 }
+
 func Benchmark_hwazero_Old_CallBack(b *testing.B) {
 
 	hcallbaсkCount = 0
