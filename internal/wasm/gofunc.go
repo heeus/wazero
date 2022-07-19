@@ -77,10 +77,6 @@ func PopValues(count int, popper func() uint64) []uint64 {
 // Note: ctx must use the caller's memory, which might be different from the defining module on an imported function.
 func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, params []uint64) []uint64 {
 	tp := f.GoFunc.Type()
-	var results []uint64
-	if tp.NumOut() > 0 {
-		results = make([]uint64, 0, tp.NumOut())
-	}
 
 	var in []reflect.Value
 	if tp.NumIn() != 0 {
@@ -115,6 +111,11 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 			in[i] = val
 			i++
 		}
+	}
+
+	var results []uint64
+	if tp.NumOut() > 0 {
+		results = make([]uint64, 0, tp.NumOut())
 	}
 
 	// Execute the host function and push back the call result onto the stack.
