@@ -745,6 +745,12 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	startTime := ce.startTime
 	timefunc := ce.getCtxTime
 	stackpos := ce.stack.GetLen()
+
+	incFrameAndGas := func(frm *callFrame, gas *uint64) {
+		frm.pc++
+		*gas = *gas + gasUnity
+	}
+
 	for frame.pc < bodyLen {
 		opcounter--
 		if opcounter == 0 {
@@ -863,14 +869,13 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					callopgas = ce.opgas
 					opcounter = ce.opcounter
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindDrop:
 			{
 				ce.drop(op.rs[0])
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindSelect:
 			{
@@ -880,34 +885,29 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					_ = ce.popValue()
 					ce.pushValue(v2)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindPick:
 			{
 				ce.stack.Pick(int(op.us[0]))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindSwap:
 			{
 				ce.stack.Swap(int(op.us[0]))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindGlobalGet:
 			{
 				g := globals[op.us[0]] // TODO: Not yet traceable as it doesn't use the types in global.go
 				ce.pushValue(g.Val)
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindGlobalSet:
 			{
 				g := globals[op.us[0]] // TODO: Not yet traceable as it doesn't use the types in global.go
 				g.Val = ce.popValue()
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindLoad:
 			{
@@ -926,8 +926,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 						ce.pushValue(val)
 					}
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindLoad8:
 			{
@@ -942,8 +941,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				case wazeroir.SignedUint32, wazeroir.SignedUint64:
 					ce.pushValue(uint64(val))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindLoad16:
 			{
@@ -958,8 +956,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				case wazeroir.SignedUint32, wazeroir.SignedUint64:
 					ce.pushValue(uint64(val))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindLoad32:
 			{
@@ -973,8 +970,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				} else {
 					ce.pushValue(uint64(val))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindStore:
 			{
@@ -990,8 +986,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 						panic(wasmruntime.ErrRuntimeOutOfBoundsMemoryAccess)
 					}
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindStore8:
 			{
@@ -1000,8 +995,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				if !memoryInst.WriteByte(ctx, offset, val) {
 					panic(wasmruntime.ErrRuntimeOutOfBoundsMemoryAccess)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindStore16:
 			{
@@ -1010,8 +1004,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				if !memoryInst.WriteUint16Le(ctx, offset, val) {
 					panic(wasmruntime.ErrRuntimeOutOfBoundsMemoryAccess)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindStore32:
 			{
@@ -1020,29 +1013,25 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				if !memoryInst.WriteUint32Le(ctx, offset, val) {
 					panic(wasmruntime.ErrRuntimeOutOfBoundsMemoryAccess)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindMemorySize:
 			{
 				ce.pushValue(uint64(memoryInst.PageSize(ctx)))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindMemoryGrow:
 			{
 				n := ce.popValue()
 				res := memoryInst.Grow(ctx, uint32(n))
 				ce.pushValue(uint64(res))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindConstI32, wazeroir.OperationKindConstI64,
 			wazeroir.OperationKindConstF32, wazeroir.OperationKindConstF64:
 			{
 				ce.pushValue(op.us[0])
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindEq:
 			{
@@ -1063,8 +1052,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				} else {
 					ce.pushValue(0)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindNe:
 			{
@@ -1085,8 +1073,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				} else {
 					ce.pushValue(0)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindEqz:
 			{
@@ -1095,8 +1082,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				} else {
 					ce.pushValue(0)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindLt:
 			{
@@ -1120,8 +1106,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				} else {
 					ce.pushValue(0)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindGt:
 			{
@@ -1145,8 +1130,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				} else {
 					ce.pushValue(0)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindLe:
 			{
@@ -1170,8 +1154,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				} else {
 					ce.pushValue(0)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindGe:
 			{
@@ -1195,8 +1178,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				} else {
 					ce.pushValue(0)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindAdd:
 			{
@@ -1215,8 +1197,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := math.Float64frombits(v1) + math.Float64frombits(v2)
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindSub:
 			{
@@ -1234,8 +1215,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := math.Float64frombits(v1) - math.Float64frombits(v2)
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindMul:
 			{
@@ -1253,8 +1233,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := math.Float64frombits(v2) * math.Float64frombits(v1)
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindClz:
 			{
@@ -1266,8 +1245,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(uint64(bits.LeadingZeros64(v)))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindCtz:
 			{
@@ -1279,8 +1257,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(uint64(bits.TrailingZeros64(v)))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindPopcnt:
 			{
@@ -1292,8 +1269,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(uint64(bits.OnesCount64(v)))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindDiv:
 			{
@@ -1342,8 +1318,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := math.Float64frombits(n) / math.Float64frombits(d)
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindRem:
 			{
@@ -1369,8 +1344,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					n := v1
 					ce.pushValue(n % d)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindAnd:
 			{
@@ -1383,8 +1357,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(uint64(v2 & v1))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindOr:
 			{
@@ -1397,8 +1370,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(uint64(v2 | v1))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindXor:
 			{
@@ -1411,8 +1383,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(uint64(v2 ^ v1))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindShl:
 			{
@@ -1425,8 +1396,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(v1 << (v2 % 64))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindShr:
 			{
@@ -1442,8 +1412,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				case wazeroir.SignedUint64:
 					ce.pushValue(v1 >> (v2 % 64))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindRotl:
 			{
@@ -1456,8 +1425,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(uint64(bits.RotateLeft64(v1, int(v2))))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindRotr:
 			{
@@ -1470,8 +1438,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					// UnsignedInt64
 					ce.pushValue(uint64(bits.RotateLeft64(v1, -int(v2))))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindAbs:
 			{
@@ -1484,8 +1451,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					const mask uint64 = 1 << 63
 					ce.pushValue(uint64(ce.popValue() &^ mask))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindNeg:
 			{
@@ -1498,8 +1464,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := -math.Float64frombits(ce.popValue())
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindCeil:
 			{
@@ -1512,8 +1477,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := math.Ceil(float64(math.Float64frombits(ce.popValue())))
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindFloor:
 			{
@@ -1526,8 +1490,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := math.Floor(float64(math.Float64frombits(ce.popValue())))
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindTrunc:
 			{
@@ -1540,8 +1503,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := math.Trunc(float64(math.Float64frombits(ce.popValue())))
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindNearest:
 			{
@@ -1554,8 +1516,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					f := math.Float64frombits(ce.popValue())
 					ce.pushValue(math.Float64bits(moremath.WasmCompatNearestF64(f)))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindSqrt:
 			{
@@ -1568,8 +1529,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := math.Sqrt(float64(math.Float64frombits(ce.popValue())))
 					ce.pushValue(math.Float64bits(v))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindMin:
 			{
@@ -1583,8 +1543,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v1 := math.Float64frombits(ce.popValue())
 					ce.pushValue(math.Float64bits(moremath.WasmCompatMin(v1, v2)))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindMax:
 			{
@@ -1600,8 +1559,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v1 := math.Float64frombits(ce.popValue())
 					ce.pushValue(math.Float64bits(moremath.WasmCompatMax(v1, v2)))
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindCopysign:
 			{
@@ -1618,14 +1576,12 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					const signbit = 1 << 63
 					ce.pushValue(v1&^signbit | v2&signbit)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindI32WrapFromI64:
 			{
 				ce.pushValue(uint64(uint32(ce.popValue())))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindITruncFromF:
 			{
@@ -1826,8 +1782,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 						ce.pushValue(res)
 					}
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindFConvertFromI:
 			{
@@ -1873,8 +1828,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 						ce.pushValue(math.Float64bits(v))
 					}
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindF32DemoteFromF64:
 			{
@@ -1886,8 +1840,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 			{
 				v := float64(math.Float32frombits(uint32(ce.popValue())))
 				ce.pushValue(math.Float64bits(v))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindExtend:
 			{
@@ -1899,44 +1852,38 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					v := uint64(uint32(ce.popValue()))
 					ce.pushValue(v)
 				}
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 
 		case wazeroir.OperationKindSignExtend32From8:
 			{
 				v := int32(int8(ce.popValue()))
 				ce.pushValue(uint64(v))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindSignExtend32From16:
 			{
 				v := int32(int16(ce.popValue()))
 				ce.pushValue(uint64(v))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindSignExtend64From8:
 			{
 				v := int64(int8(ce.popValue()))
 				ce.pushValue(uint64(v))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindSignExtend64From16:
 			{
 				v := int64(int16(ce.popValue()))
 				ce.pushValue(uint64(v))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindSignExtend64From32:
 			{
 				v := int64(int32(ce.popValue()))
 				ce.pushValue(uint64(v))
-				frame.pc++
-				callopgas = callopgas + gasUnity
+				incFrameAndGas(&frame, &callopgas)
 			}
 		case wazeroir.OperationKindMemoryInit:
 			dataInstance := dataInstances[op.us[0]]
@@ -1949,12 +1896,10 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 			} else if copySize != 0 {
 				copy(memoryInst.Buffer[inMemoryOffset:inMemoryOffset+copySize], dataInstance[inDataOffset:])
 			}
-			frame.pc++
-			callopgas = callopgas + gasUnity
+			incFrameAndGas(&frame, &callopgas)
 		case wazeroir.OperationKindDataDrop:
 			dataInstances[op.us[0]] = nil
-			frame.pc++
-			callopgas = callopgas + gasUnity
+			incFrameAndGas(&frame, &callopgas)
 		case wazeroir.OperationKindMemoryCopy:
 			memLen := uint64(len(memoryInst.Buffer))
 			copySize := ce.popValue()
@@ -1966,8 +1911,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				copy(memoryInst.Buffer[destinationOffset:],
 					memoryInst.Buffer[sourceOffset:sourceOffset+copySize])
 			}
-			frame.pc++
-			callopgas = callopgas + gasUnity
+			incFrameAndGas(&frame, &callopgas)
 		case wazeroir.OperationKindMemoryFill:
 			fillSize := ce.popValue()
 			value := byte(ce.popValue())
@@ -1983,8 +1927,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 					copy(buf[i:], buf[:i])
 				}
 			}
-			frame.pc++
-			callopgas = callopgas + gasUnity
+			incFrameAndGas(&frame, &callopgas)
 		case wazeroir.OperationKindTableInit:
 			elementInstance := elementInstances[op.us[0]]
 			copySize := ce.popValue()
@@ -1996,11 +1939,10 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 			} else if copySize != 0 {
 				copy(table.References[inTableOffset:inTableOffset+copySize], elementInstance.References[inElementOffset:])
 			}
-			frame.pc++
-			callopgas = callopgas + gasUnity
+			incFrameAndGas(&frame, &callopgas)
 		case wazeroir.OperationKindElemDrop:
 			elementInstances[op.us[0]].References = nil
-			frame.pc++
+			incFrameAndGas(&frame, &callopgas)
 		case wazeroir.OperationKindTableCopy:
 			table := table.References
 			tableLen := uint64(len(table))
@@ -2012,8 +1954,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 			} else if copySize != 0 {
 				copy(table[destinationOffset:], table[sourceOffset:sourceOffset+copySize])
 			}
-			frame.pc++
-			callopgas = callopgas + gasUnity
+			incFrameAndGas(&frame, &callopgas)
 		}
 	}
 	ce.opgas = callopgas
