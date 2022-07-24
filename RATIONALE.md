@@ -82,8 +82,8 @@ If later, we have demand for multiple stores, that can be accomplished by overlo
 `Runtime.Store(name) Store`.
 
 ## wazeroir
-wazero's intermediate representation (IR) is called `wazeroir`. Compiling into an IR provides us a faster interpreter
-and a building block for a future JIT compilation engine. Both of these help answer demands for a more performant
+wazero's intermediate representation (IR) is called `wazeroir`. Compiling into an IR provides us a faster interpreter. 
+This helps answer demands for a more performant
 runtime vs interpreting Wasm directly (the `naivevm` interpreter).
 
 ### Intermediate Representation (IR) design
