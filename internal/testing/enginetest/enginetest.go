@@ -580,10 +580,8 @@ func setupCallTests(t *testing.T, e wasm.Engine) (*wasm.ModuleInstance, *wasm.Mo
 }
 
 // linkModuleToEngine assigns fields that wasm.Store would on instantiation. These includes fields interpreter.
-//
-// wasm.Store: store isn't used here for unit test precision.
 func linkModuleToEngine(module *wasm.ModuleInstance, me wasm.ModuleEngine) {
-	module.Engine = me 
+	module.Engine = me
 	module.CallCtx = wasm.NewCallContext(nil, module, nil)
 }
 
