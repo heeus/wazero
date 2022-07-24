@@ -31,13 +31,6 @@ var tests = map[string]func(t *testing.T, r wazero.Runtime){
 	"exported function that grows memory":     testMemOps,
 }
 
-func TestEngineJIT(t *testing.T) {
-	if !wazero.JITSupported {
-		t.Skip()
-	}
-	runAllTests(t, tests, wazero.NewRuntimeConfigJIT())
-}
-
 func TestEngineInterpreter(t *testing.T) {
 	runAllTests(t, tests, wazero.NewRuntimeConfigInterpreter())
 }
@@ -119,7 +112,7 @@ func TestImportedAndExportedFunc(t *testing.T) {
 }
 
 // testImportedAndExportedFunc fails if the engine cannot call an "imported-and-then-exported-back" function
-// Notably, this uses memory, which ensures api.Module is valid in both interpreter and JIT engines.
+// Notably, this uses memory, which ensures api.Module is valid in interpreter engine.
 func testImportedAndExportedFunc(t *testing.T, r wazero.Runtime) {
 	var memory *wasm.MemoryInstance
 	storeInt := func(ctx context.Context, m api.Module, offset uint32, val uint64) uint32 {

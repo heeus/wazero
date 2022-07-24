@@ -1,7 +1,6 @@
 name: Examples
 on:
   push:
-    branches: [main]
     paths:
       - '.github/workflows/examples.yaml'
       - 'examples/*/testdata/*.go'

@@ -13,13 +13,6 @@ import (
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
-func TestSignExtensionOps_JIT(t *testing.T) {
-	if !wazero.JITSupported {
-		t.Skip()
-	}
-	testSignExtensionOps(t, wazero.NewRuntimeConfigJIT)
-}
-
 func TestSignExtensionOps_Interpreter(t *testing.T) {
 	testSignExtensionOps(t, wazero.NewRuntimeConfigInterpreter)
 }

@@ -237,10 +237,6 @@ Theoretically, a module can declare globals (including imports) up to 2^32 times
 That is because internally we store globals in a slice with pointer types (meaning 8 bytes on 64-bit platforms), and therefore 2^27 globals
 means that we have 1 GiB size of slice which seems large enough for most applications.
 
-## JIT engine implementation
-
-See [wasm/jit/RATIONALE.md](internal/wasm/jit/RATIONALE.md).
-
 ## Golang patterns
 
 ### Hammer tests

@@ -41,10 +41,6 @@ func NewWazeroInterpreterRuntime() Runtime {
 	return newWazeroRuntime("wazero-interpreter", wazero.NewRuntimeConfigInterpreter().WithFinishedFeatures())
 }
 
-func NewWazeroJITRuntime() Runtime {
-	return newWazeroRuntime(jitRuntime, wazero.NewRuntimeConfigJIT().WithFinishedFeatures())
-}
-
 func newWazeroRuntime(name string, config *wazero.RuntimeConfig) *wazeroRuntime {
 	return &wazeroRuntime{name: name, config: config}
 }

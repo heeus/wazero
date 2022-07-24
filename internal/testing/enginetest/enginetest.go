@@ -6,12 +6,6 @@
 //		enginetest.RunTestModuleEngine_Call(t, NewEngine)
 //	}
 //
-// Ex. Some tests using the JIT Engine may need to guard as they use compiled features:
-//	func TestModuleEngine_Call(t *testing.T) {
-//		requireSupportedOSArch(t)
-//		enginetest.RunTestModuleEngine_Call(t, NewEngine)
-//	}
-//
 // Note: These tests intentionally avoid using wasm.Store as it is important to know both the dependencies and
 // the capabilities at the wasm.Engine abstraction.
 package enginetest
@@ -585,16 +579,11 @@ func setupCallTests(t *testing.T, e wasm.Engine) (*wasm.ModuleInstance, *wasm.Mo
 	}
 }
 
-// linkModuleToEngine assigns fields that wasm.Store would on instantiation. These includes fields both interpreter and
-// JIT needs as well as fields only needed by JIT.
+// linkModuleToEngine assigns fields that wasm.Store would on instantiation. These includes fields interpreter.
 //
-// Note: This sets fields that are not needed in the interpreter, but are required by code compiled by JIT. If a new
-// test here passes in the interpreter and segmentation faults in JIT, check for a new field offset or a change in JIT
-// (ex. jit.TestVerifyOffsetValue). It is possible for all other tests to pass as that field is implicitly set by
 // wasm.Store: store isn't used here for unit test precision.
 func linkModuleToEngine(module *wasm.ModuleInstance, me wasm.ModuleEngine) {
-	module.Engine = me // for JIT, links the module to the module-engine compiled from it (moduleInstanceEngineOffset).
-	// callEngineModuleContextModuleInstanceAddressOffset
+	module.Engine = me 
 	module.CallCtx = wasm.NewCallContext(nil, module, nil)
 }
 

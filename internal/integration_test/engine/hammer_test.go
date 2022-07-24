@@ -17,13 +17,6 @@ var hammers = map[string]func(t *testing.T, r wazero.Runtime){
 	"close imported module while in use":  closeImportedModuleWhileInUse,
 }
 
-func TestEngineJIT_hammer(t *testing.T) {
-	if !wazero.JITSupported {
-		t.Skip()
-	}
-	runAllTests(t, hammers, wazero.NewRuntimeConfigJIT())
-}
-
 func TestEngineInterpreter_hammer(t *testing.T) {
 	runAllTests(t, hammers, wazero.NewRuntimeConfigInterpreter())
 }

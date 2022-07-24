@@ -5,7 +5,6 @@ import (
 	_ "embed"
 	"fmt"
 	"math/rand"
-	"runtime"
 	"testing"
 
 	"github.com/heeus/wazero"
@@ -26,13 +25,6 @@ func BenchmarkInvocation(b *testing.B) {
 		defer m.Close(testCtx)
 		runAllInvocationBenches(b, m)
 	})
-	if runtime.GOARCH == "amd64" || runtime.GOARCH == "arm64" {
-		b.Run("jit", func(b *testing.B) {
-			m := instantiateHostFunctionModuleWithEngine(b, wazero.NewRuntimeConfigJIT())
-			defer m.Close(testCtx)
-			runAllInvocationBenches(b, m)
-		})
-	}
 }
 
 func BenchmarkInitialization(b *testing.B) {
@@ -40,13 +32,6 @@ func BenchmarkInitialization(b *testing.B) {
 		r := createRuntime(b, wazero.NewRuntimeConfigInterpreter())
 		runInitializationBench(b, r)
 	})
-
-	if runtime.GOARCH == "amd64" || runtime.GOARCH == "arm64" {
-		b.Run("jit", func(b *testing.B) {
-			r := createRuntime(b, wazero.NewRuntimeConfigJIT())
-			runInitializationBench(b, r)
-		})
-	}
 }
 
 func runInitializationBench(b *testing.B, r wazero.Runtime) {
