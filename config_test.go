@@ -85,7 +85,7 @@ func TestRuntimeConfig(t *testing.T) {
 	}
 
 	t.Run("WithMemoryCapacityPages", func(t *testing.T) {
-		c := NewRuntimeConfig()
+		c := NewRuntimeConfigInterpreter()
 
 		// Test default returns min
 		require.Equal(t, uint32(1), c.memoryCapacityPages(1, nil))
@@ -156,7 +156,7 @@ func TestRuntimeConfig_FeatureToggle(t *testing.T) {
 		tc := tt
 
 		t.Run(tc.name, func(t *testing.T) {
-			c := NewRuntimeConfig()
+			c := NewRuntimeConfigInterpreter()
 			require.Equal(t, tc.expectDefault, c.enabledFeatures.Get(tc.feature))
 
 			// Set to false even if it was initially false.

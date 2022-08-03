@@ -6,6 +6,12 @@ on:
       - 'examples/*/testdata/*.go'
       - 'examples/*/*/testdata/*.go'
       - 'Makefile'
+  pull_request:
+    paths:
+      - '.github/workflows/examples.yaml'
+      - 'examples/*/testdata/*.go'
+      - 'examples/*/*/testdata/*.go'
+      - 'Makefile'
 
 jobs:
   examples:

@@ -118,7 +118,7 @@ type Runtime interface {
 }
 
 func NewRuntime() Runtime {
-	return NewRuntimeWithConfig(NewRuntimeConfig())
+	return NewRuntimeWithConfig(NewRuntimeConfigInterpreter())
 }
 
 // NewRuntimeWithConfig returns a runtime with the given configuration.

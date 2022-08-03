@@ -139,16 +139,9 @@ For example, once Go 1.29 is released, wazero may use a Go 1.28 feature.
 
 ### Platform
 
-wazero has one runtime mode: Interpreter. The only supported operating
-systems are ones we test, but that doesn't necessarily mean other operating
+wazero has one runtime mode: Interpreter. The only Linux operating
+system is one we test, but that doesn't necessarily mean other operating
 system versions won't work.
-
-We currently test Linux (Ubuntu and scratch), MacOS and Windows as packaged by
-[GitHub Actions][11].
-
-* Interpreter
-  * Linux is tested on amd64 (native) as well arm64 and riscv64 via emulation.
-  * MacOS and Windows are only tested on amd64.
 
 wazero has no dependencies and doesn't require CGO. This means it can also be
 embedded in an application that doesn't use an operating system. This is a main
