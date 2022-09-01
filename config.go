@@ -11,7 +11,6 @@ import (
 
 	"github.com/heeus/wazero/internal/wasm"
 	"github.com/heeus/wazero/internal/wasm/interpreter"
-	"github.com/heeus/wazero/internal/wasm/jit"
 )
 
 // RuntimeConfig controls runtime behavior, with the default implementation as NewRuntimeConfig
@@ -39,16 +38,6 @@ func (c *RuntimeConfig) clone() *RuntimeConfig {
 		memoryLimitPages:    c.memoryLimitPages,
 		memoryCapacityPages: c.memoryCapacityPages,
 	}
-}
-
-// NewRuntimeConfigJIT compiles WebAssembly modules into runtime.GOARCH-specific assembly for optimal performance.
-//
-// Note: This panics at runtime the runtime.GOOS or runtime.GOARCH does not support JIT. Use NewRuntimeConfig to safely
-// detect and fallback to NewRuntimeConfigInterpreter if needed.
-func NewRuntimeConfigJIT() *RuntimeConfig {
-	ret := engineLessConfig.clone()
-	ret.newEngine = jit.NewEngine
-	return ret
 }
 
 // NewRuntimeConfigInterpreter interprets WebAssembly modules instead of compiling them into assembly.

@@ -1,11 +1,10 @@
 goimports := golang.org/x/tools/cmd/goimports@v0.1.10
 golangci_lint := github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
 
-ensureJITFastest := -ldflags '-X github.com/heeus/wazero/internal/integration_test/vs.ensureJITFastest=true'
 .PHONY: bench
 bench:
 	@go test -run=NONE -benchmem -bench=. ./internal/integration_test/bench/...
-	@go test -benchmem -bench=. ./internal/integration_test/vs/... $(ensureJITFastest)
+	@go test -benchmem -bench=. ./internal/integration_test/vs/...
 
 .PHONY: bench.check
 bench.check:
@@ -13,7 +12,7 @@ bench.check:
 	@# Don't use -test.benchmem as it isn't accurate when comparing against CGO libs
 	@for d in vs/wasmedge vs/wasmer vs/wasmtime ; do \
 		cd ./internal/integration_test/$$d ; \
-		go test -bench=. . -tags='wasmedge' $(ensureJITFastest) ; \
+		go test -bench=. . -tags='wasmedge' ; \
 		cd - ;\
 	done
 
@@ -56,7 +55,6 @@ build.spectest: # Note: wabt by default uses >1.0 features, so wast2json flags m
 .PHONY: test
 test:
 	@go test ./... -timeout 120s
-	@cd internal/integration_test/asm && go test ./... -timeout 120s
 
 golangci_lint_path := $(shell go env GOPATH)/bin/golangci-lint
 
@@ -80,7 +78,6 @@ format:
 
 .PHONY: check
 check:
-	@$(MAKE) lint golangci_lint_goarch=arm64
 	@$(MAKE) lint golangci_lint_goarch=amd64
 	@$(MAKE) format
 	@go mod tidy

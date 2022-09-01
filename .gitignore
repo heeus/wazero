@@ -22,3 +22,4 @@ go.work
 
 # Goland
 .idea
+.vscode

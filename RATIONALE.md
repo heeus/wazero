@@ -82,8 +82,8 @@ If later, we have demand for multiple stores, that can be accomplished by overlo
 `Runtime.Store(name) Store`.
 
 ## wazeroir
-wazero's intermediate representation (IR) is called `wazeroir`. Compiling into an IR provides us a faster interpreter
-and a building block for a future JIT compilation engine. Both of these help answer demands for a more performant
+wazero's intermediate representation (IR) is called `wazeroir`. Compiling into an IR provides us a faster interpreter. 
+This helps answer demands for a more performant
 runtime vs interpreting Wasm directly (the `naivevm` interpreter).
 
 ### Intermediate Representation (IR) design
@@ -236,10 +236,6 @@ All the functions are statically analyzed at module instantiation phase, and if 
 Theoretically, a module can declare globals (including imports) up to 2^32 times. However, wazero limits this to  2^27(134,217,728) per module.
 That is because internally we store globals in a slice with pointer types (meaning 8 bytes on 64-bit platforms), and therefore 2^27 globals
 means that we have 1 GiB size of slice which seems large enough for most applications.
-
-## JIT engine implementation
-
-See [wasm/jit/RATIONALE.md](internal/wasm/jit/RATIONALE.md).
 
 ## Golang patterns
 

@@ -13,13 +13,6 @@ import (
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
-func TestMultiValue_JIT(t *testing.T) {
-	if !wazero.JITSupported {
-		t.Skip()
-	}
-	testMultiValue(t, wazero.NewRuntimeConfigJIT)
-}
-
 func TestMultiValue_Interpreter(t *testing.T) {
 	testMultiValue(t, wazero.NewRuntimeConfigInterpreter)
 }

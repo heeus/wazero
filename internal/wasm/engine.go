@@ -3,7 +3,7 @@ package wasm
 import "context"
 
 // Engine is a Store-scoped mechanism to compile functions declared or imported by a module.
-// This is a top-level type implemented by an interpreter or JIT compiler.
+// This is a top-level type implemented by an interpreter.
 type Engine interface {
 	// CompileModule implements the same method as documented on wasm.Engine.
 	CompileModule(ctx context.Context, module *Module) error
