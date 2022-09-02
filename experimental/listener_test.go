@@ -59,7 +59,7 @@ func Example_listener() {
 	// Set context to one that has an experimental listener
 	ctx := context.WithValue(context.Background(), experimental.FunctionListenerFactoryKey{}, &loggerFactory{})
 
-	r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
+	r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
 	wm, err := wasi.InstantiateSnapshotPreview1(ctx, r)
 	if err != nil {
 		log.Fatal(err)

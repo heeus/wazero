@@ -3,9 +3,16 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
+	"time"
 )
+
+var ErrGasLimit = errors.New("gas limit exceeded")
+var ErrDuration = errors.New("duration exceeded")
+
+type StackParamFuncType = func([]uint64) []uint64
 
 // ValueType describes a numeric type used in Web Assembly 1.0 (20191205). For example, Function parameters and results are
 // only definable as a value type.
@@ -40,6 +47,8 @@ const (
 	// ValueTypeF64 is a 32-bit floating point number.
 	ValueTypeF64 ValueType = 0x7c
 )
+
+const ValueTypeSlice ValueType = 0x17
 
 // ValueTypeName returns the type name of the given ValueType as a string.
 // These type names match the names used in the WebAssembly text format.
@@ -127,6 +136,15 @@ type Function interface {
 	// sys.ExitError. Interpreting this is specific to the module. For example, some "main" functions always call a
 	// function that exits.
 	Call(ctx context.Context, params ...uint64) ([]uint64, error)
+
+	// CallEx - the same as Call, CallEngine is defined outside, CallEngineParams defines Duration and Gas Limit
+	CallEx(ctx context.Context, ce ICallEngine, ceParams *CallEngineParams, params ...uint64) ([]uint64, error)
+
+	// CallEx - the same as Call, CallEngine is defined outside, CallEngineParams defines Duration and Gas Limit, parameters are passed in slice
+	CallExArg(ctx context.Context, ce ICallEngine, ceParams *CallEngineParams, params []uint64) ([]uint64, error)
+
+	// NewCallEngine s.e.
+	NewCallEngine() ICallEngine
 }
 
 // Global is a WebAssembly 1.0 (20191205) global exported from an instantiated module (wazero.Runtime InstantiateModule).
@@ -244,6 +262,16 @@ type Memory interface {
 
 	// Write writes the slice to the underlying buffer at the offset or returns false if out of range.
 	Write(ctx context.Context, offset uint32, v []byte) bool
+}
+
+// ICallEngine s.e.
+type ICallEngine interface {
+}
+
+//CallEngineParams s.e.
+type CallEngineParams struct {
+	Duration time.Duration
+	Gaslimit uint64
 }
 
 // EncodeI32 encodes the input as a ValueTypeI32.

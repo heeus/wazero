@@ -211,11 +211,12 @@ func (m *MemoryInstance) Grow(_ context.Context, delta uint32) (result uint32) {
 		m.Buffer = append(m.Buffer, make([]byte, MemoryPagesToBytesNum(delta))...)
 		m.Cap = newPages
 		return currentPages
-	} else { // We already have the capacity we need.
-		sp := (*reflect.SliceHeader)(unsafe.Pointer(&m.Buffer))
-		sp.Len = int(MemoryPagesToBytesNum(newPages))
-		return currentPages
 	}
+	// We already have the capacity we need.
+	sp := (*reflect.SliceHeader)(unsafe.Pointer(&m.Buffer))
+	sp.Len = int(MemoryPagesToBytesNum(newPages))
+	return currentPages
+
 }
 
 // PageSize returns the current memory buffer size in pages.
@@ -229,19 +230,20 @@ func (m *MemoryInstance) PageSize(_ context.Context) (result uint32) {
 //
 // See https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/#memory-instances%E2%91%A0
 func PagesToUnitOfBytes(pages uint32) string {
+	const tenbit = 1024
 	k := pages * 64
-	if k < 1024 {
+	if k < tenbit {
 		return fmt.Sprintf("%d Ki", k)
 	}
-	m := k / 1024
-	if m < 1024 {
+	m := k / tenbit
+	if m < tenbit {
 		return fmt.Sprintf("%d Mi", m)
 	}
-	g := m / 1024
-	if g < 1024 {
+	g := m / tenbit
+	if g < tenbit {
 		return fmt.Sprintf("%d Gi", g)
 	}
-	return fmt.Sprintf("%d Ti", g/1024)
+	return fmt.Sprintf("%d Ti", g/tenbit)
 }
 
 // Below are raw functions used to implement the api.Memory API:

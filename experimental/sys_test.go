@@ -36,7 +36,7 @@ func Example_sys() {
 	// Set context to one that has experimental sys config
 	ctx := context.WithValue(context.Background(), experimental.SysKey{}, &fakeSys{})
 
-	r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
+	r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
 	wm, err := wasi.InstantiateSnapshotPreview1(ctx, r)
 	if err != nil {
 		log.Fatal(err)

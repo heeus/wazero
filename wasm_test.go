@@ -69,7 +69,7 @@ func TestRuntime_CompileModule(t *testing.T) {
 	}
 
 	t.Run("text - memory", func(t *testing.T) {
-		r := NewRuntimeWithConfig(NewRuntimeConfigInterpreter().
+		r := NewRuntimeWithConfig(NewRuntimeConfig().
 			WithMemoryCapacityPages(func(minPages uint32, maxPages *uint32) uint32 { return 2 }))
 
 		source := []byte(`(module (memory 1 3))`)
@@ -110,33 +110,33 @@ func TestRuntime_CompileModule_Errors(t *testing.T) {
 		},
 		{
 			name:        "RuntimeConfig.memoryLimitPages too large",
-			runtime:     NewRuntimeWithConfig(NewRuntimeConfigInterpreter().WithMemoryLimitPages(math.MaxUint32)),
+			runtime:     NewRuntimeWithConfig(NewRuntimeConfig().WithMemoryLimitPages(math.MaxUint32)),
 			source:      []byte(`(module)`),
 			expectedErr: "memoryLimitPages 4294967295 (3 Ti) > specification max 65536 (4 Gi)",
 		},
 		{
 			name:        "memory has too many pages - text",
-			runtime:     NewRuntimeWithConfig(NewRuntimeConfigInterpreter().WithMemoryLimitPages(2)),
+			runtime:     NewRuntimeWithConfig(NewRuntimeConfig().WithMemoryLimitPages(2)),
 			source:      []byte(`(module (memory 3))`),
 			expectedErr: "1:17: min 3 pages (192 Ki) over limit of 2 pages (128 Ki) in module.memory[0]",
 		},
 		{
 			name: "memory cap < min", // only one test to avoid duplicating tests in module_test.go
-			runtime: NewRuntimeWithConfig(NewRuntimeConfigInterpreter().
+			runtime: NewRuntimeWithConfig(NewRuntimeConfig().
 				WithMemoryCapacityPages(func(minPages uint32, maxPages *uint32) uint32 { return 1 })),
 			source:      []byte(`(module (memory 3))`),
 			expectedErr: "memory[0] capacity 1 pages (64 Ki) less than minimum 3 pages (192 Ki)",
 		},
 		{
 			name: "memory cap < min - exported", // only one test to avoid duplicating tests in module_test.go
-			runtime: NewRuntimeWithConfig(NewRuntimeConfigInterpreter().
+			runtime: NewRuntimeWithConfig(NewRuntimeConfig().
 				WithMemoryCapacityPages(func(minPages uint32, maxPages *uint32) uint32 { return 1 })),
 			source:      []byte(`(module (memory 3) (export "memory" (memory 0)))`),
 			expectedErr: "memory[memory] capacity 1 pages (64 Ki) less than minimum 3 pages (192 Ki)",
 		},
 		{
 			name:        "memory has too many pages - binary",
-			runtime:     NewRuntimeWithConfig(NewRuntimeConfigInterpreter().WithMemoryLimitPages(2)),
+			runtime:     NewRuntimeWithConfig(NewRuntimeConfig().WithMemoryLimitPages(2)),
 			source:      binary.EncodeModule(&wasm.Module{MemorySection: &wasm.Memory{Min: 2, Max: 3, IsMaxEncoded: true}}),
 			expectedErr: "section memory: max 3 pages (192 Ki) over limit of 2 pages (128 Ki)",
 		},

@@ -26,6 +26,8 @@ const (
 	// FunctionKindGoContextModule is a function implemented in Go, with a signature matching FunctionType, except arg
 	// zero is a context.Context and arg one is an api.Module.
 	FunctionKindGoContextModule
+	// FunctionKindGoStackArgs passes params as part of stack
+	FunctionKindGoStackArgs
 )
 
 // Below are reflection code to get the interface type used to parse functions and set values.
@@ -111,11 +113,12 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 		}
 	}
 
-	// Execute the host function and push back the call result onto the stack.
 	var results []uint64
 	if tp.NumOut() > 0 {
 		results = make([]uint64, 0, tp.NumOut())
 	}
+
+	// Execute the host function and push back the call result onto the stack.
 	for _, ret := range f.GoFunc.Call(in) {
 		switch ret.Kind() {
 		case reflect.Float32:
@@ -131,6 +134,11 @@ func CallGoFunc(ctx context.Context, callCtx *CallContext, f *FunctionInstance, 
 		}
 	}
 	return results
+}
+
+func CallGoFuncStackParams(f *FunctionInstance, params []uint64) []uint64 {
+	var fp func([]uint64) []uint64 = f.GoFuncInstance.(func([]uint64) []uint64)
+	return fp(params)
 }
 
 func newContextVal(ctx context.Context) reflect.Value {
@@ -178,23 +186,28 @@ func getFunctionType(fn *reflect.Value, enabledFeatures Features) (fk FunctionKi
 
 	for i := 0; i < len(ft.Params); i++ {
 		pI := p.In(i + pOffset)
-		if t, ok := getTypeOf(pI.Kind()); ok {
-			ft.Params[i] = t
-			continue
+		if pI.Kind() == reflect.Slice && len(ft.Params) > 1 {
+			err = fmt.Errorf("param[%d] is slice, so it must be only one argument", i+pOffset)
 		}
+		if err == nil {
+			if t, ok := getTypeOf(pI.Kind()); ok {
+				ft.Params[i] = t
+				continue
+			}
 
-		// Now, we will definitely err, decide which message is best
-		var arg0Type reflect.Type
-		if hc := pI.Implements(moduleType); hc {
-			arg0Type = moduleType
-		} else if gc := pI.Implements(goContextType); gc {
-			arg0Type = goContextType
-		}
+			// Now, we will definitely err, decide which message is best
+			var arg0Type reflect.Type
+			if hc := pI.Implements(moduleType); hc {
+				arg0Type = moduleType
+			} else if gc := pI.Implements(goContextType); gc {
+				arg0Type = goContextType
+			}
 
-		if arg0Type != nil {
-			err = fmt.Errorf("param[%d] is a %s, which may be defined only once as param[0]", i+pOffset, arg0Type)
-		} else {
-			err = fmt.Errorf("param[%d] is unsupported: %s", i+pOffset, pI.Kind())
+			if arg0Type != nil {
+				err = fmt.Errorf("param[%d] is a %s, which may be defined only once as param[0]", i+pOffset, arg0Type)
+			} else {
+				err = fmt.Errorf("param[%d] is unsupported: %s", i+pOffset, pI.Kind())
+			}
 		}
 		return
 	}
@@ -219,6 +232,9 @@ func getFunctionType(fn *reflect.Value, enabledFeatures Features) (fk FunctionKi
 
 func kind(p reflect.Type) FunctionKind {
 	pCount := p.NumIn()
+	if pCount == 1 && p.In(0).Kind() == reflect.Slice {
+		return FunctionKindGoStackArgs
+	}
 	if pCount > 0 && p.In(0).Kind() == reflect.Interface {
 		p0 := p.In(0)
 		if p0.Implements(moduleType) {
@@ -243,6 +259,8 @@ func getTypeOf(kind reflect.Kind) (ValueType, bool) {
 		return ValueTypeI32, true
 	case reflect.Int64, reflect.Uint64:
 		return ValueTypeI64, true
+	case reflect.Slice:
+		return ValueTypeSlice, true
 	default:
 		return 0x00, false
 	}

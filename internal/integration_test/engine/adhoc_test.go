@@ -32,7 +32,7 @@ var tests = map[string]func(t *testing.T, r wazero.Runtime){
 }
 
 func TestEngineInterpreter(t *testing.T) {
-	runAllTests(t, tests, wazero.NewRuntimeConfigInterpreter())
+	runAllTests(t, tests, wazero.NewRuntimeConfig())
 }
 
 func runAllTests(t *testing.T, tests map[string]func(t *testing.T, r wazero.Runtime), config *wazero.RuntimeConfig) {

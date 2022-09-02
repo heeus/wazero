@@ -15,7 +15,7 @@ import (
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func TestNonTrappingFloatToIntConversion_Interpreter(t *testing.T) {
-	testNonTrappingFloatToIntConversion(t, wazero.NewRuntimeConfigInterpreter)
+	testNonTrappingFloatToIntConversion(t, wazero.NewRuntimeConfig)
 }
 
 // conversions includes changes to test/core/conversions.wast from the commit that added

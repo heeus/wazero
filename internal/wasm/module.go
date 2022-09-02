@@ -157,6 +157,8 @@ type Module struct {
 	// See https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/#host-functions%E2%91%A2
 	HostFunctionSection []*reflect.Value
 
+	HostFunctionInstanceSection []interface{}
+
 	// elementSegments are built on Validate when SectionIDElement is non-empty and all inputs are valid.
 	//
 	// Note: elementSegments retain Module.ElementSection order. Since an ElementSegment can overlap with another, order
@@ -913,10 +915,11 @@ func SectionIDName(sectionID SectionID) string {
 type ValueType = api.ValueType
 
 const (
-	ValueTypeI32 = api.ValueTypeI32
-	ValueTypeI64 = api.ValueTypeI64
-	ValueTypeF32 = api.ValueTypeF32
-	ValueTypeF64 = api.ValueTypeF64
+	ValueTypeI32   = api.ValueTypeI32
+	ValueTypeI64   = api.ValueTypeI64
+	ValueTypeF32   = api.ValueTypeF32
+	ValueTypeF64   = api.ValueTypeF64
+	ValueTypeSlice = api.ValueTypeSlice
 )
 
 // ValueTypeName is an alias of api.ValueTypeName defined to simplify imports.

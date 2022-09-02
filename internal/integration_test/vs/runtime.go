@@ -35,10 +35,14 @@ type Module interface {
 	CallI64_I64(ctx context.Context, funcName string, param uint64) (uint64, error)
 	WriteMemory(ctx context.Context, offset uint32, bytes []byte) error
 	Close(context.Context) error
+	CallI32_I32Ex(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, funcName string, param uint32) (uint32, error)
+	CallI32I32_VEx(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, funcName string, x, y uint32) error
+	CallI32_VEx(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, funcName string, param uint32) error
+	CallI64_I64Ex(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, funcName string, param uint64) (uint64, error)
 }
 
 func NewWazeroInterpreterRuntime() Runtime {
-	return newWazeroRuntime("wazero-interpreter", wazero.NewRuntimeConfigInterpreter().WithFinishedFeatures())
+	return newWazeroRuntime("wazero-interpreter", wazero.NewRuntimeConfig().WithFinishedFeatures())
 }
 
 func newWazeroRuntime(name string, config *wazero.RuntimeConfig) *wazeroRuntime {
@@ -153,6 +157,34 @@ func (m *wazeroModule) CallI32_V(ctx context.Context, funcName string, param uin
 
 func (m *wazeroModule) CallI64_I64(ctx context.Context, funcName string, param uint64) (uint64, error) {
 	if results, err := m.funcs[funcName].Call(ctx, param); err != nil {
+		return 0, err
+	} else if len(results) > 0 {
+		return results[0], nil
+	}
+	return 0, nil
+}
+
+func (m *wazeroModule) CallI32_I32Ex(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, funcName string, param uint32) (uint32, error) {
+	if results, err := m.funcs[funcName].CallEx(ctx, ce, ceParams, uint64(param)); err != nil {
+		return 0, err
+	} else if len(results) > 0 {
+		return uint32(results[0]), nil
+	}
+	return 0, nil
+}
+
+func (m *wazeroModule) CallI32I32_VEx(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, funcName string, x, y uint32) (err error) {
+	_, err = m.funcs[funcName].CallEx(ctx, ce, ceParams, uint64(x), uint64(y))
+	return
+}
+
+func (m *wazeroModule) CallI32_VEx(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, funcName string, param uint32) (err error) {
+	_, err = m.funcs[funcName].CallEx(ctx, ce, ceParams, uint64(param))
+	return
+}
+
+func (m *wazeroModule) CallI64_I64Ex(ctx context.Context, ce api.ICallEngine, ceParams *api.CallEngineParams, funcName string, param uint64) (uint64, error) {
+	if results, err := m.funcs[funcName].CallEx(ctx, ce, ceParams, param); err != nil {
 		return 0, err
 	} else if len(results) > 0 {
 		return results[0], nil

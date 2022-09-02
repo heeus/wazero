@@ -14,10 +14,10 @@ import (
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func TestBulkMemoryOperations_Interpreter(t *testing.T) {
-	testBulkMemoryOperations(t, wazero.NewRuntimeConfigInterpreter)
-	testTableCopy(t, wazero.NewRuntimeConfigInterpreter)
-	testTableInit(t, wazero.NewRuntimeConfigInterpreter)
-	testElemDrop(t, wazero.NewRuntimeConfigInterpreter)
+	testBulkMemoryOperations(t, wazero.NewRuntimeConfig)
+	testTableCopy(t, wazero.NewRuntimeConfig)
+	testTableInit(t, wazero.NewRuntimeConfig)
+	testElemDrop(t, wazero.NewRuntimeConfig)
 }
 
 var (

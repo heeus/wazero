@@ -14,7 +14,7 @@ import (
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func TestSignExtensionOps_Interpreter(t *testing.T) {
-	testSignExtensionOps(t, wazero.NewRuntimeConfigInterpreter)
+	testSignExtensionOps(t, wazero.NewRuntimeConfig)
 }
 
 // signExtend is a WebAssembly 1.0 (20191205) Text Format source, except that it uses opcodes from 'sign-extension-ops'.

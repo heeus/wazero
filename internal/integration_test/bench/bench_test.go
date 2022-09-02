@@ -12,16 +12,13 @@ import (
 	"github.com/heeus/wazero/wasi"
 )
 
-// testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.
-var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
-
 // caseWasm was compiled from TinyGo testdata/case.go
 //go:embed testdata/case.wasm
 var caseWasm []byte
 
 func BenchmarkInvocation(b *testing.B) {
 	b.Run("interpreter", func(b *testing.B) {
-		m := instantiateHostFunctionModuleWithEngine(b, wazero.NewRuntimeConfigInterpreter())
+		m := instantiateHostFunctionModuleWithEngine(b, wazero.NewRuntimeConfig())
 		defer m.Close(testCtx)
 		runAllInvocationBenches(b, m)
 	})
@@ -29,7 +26,7 @@ func BenchmarkInvocation(b *testing.B) {
 
 func BenchmarkInitialization(b *testing.B) {
 	b.Run("interpreter", func(b *testing.B) {
-		r := createRuntime(b, wazero.NewRuntimeConfigInterpreter())
+		r := createRuntime(b, wazero.NewRuntimeConfig())
 		runInitializationBench(b, r)
 	})
 }

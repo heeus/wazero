@@ -2027,7 +2027,7 @@ func maskMemory(t *testing.T, ctx context.Context, mod api.Module, size int) {
 }
 
 func instantiateModule(ctx context.Context, t *testing.T, wasifunction, wasiimport string, sysCtx *wasm.SysContext) (*snapshotPreview1, api.Module, api.Function) {
-	r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
+	r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
 
 	// The package `wazero` has a simpler interface for adding host modules, but we can't use that as it would create an
 	// import cycle. Instead, we export wasm.NewHostModule and use it here.

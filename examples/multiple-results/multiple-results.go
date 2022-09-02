@@ -47,7 +47,7 @@ func main() {
 
 	// wazero enables only W3C recommended features by default. Opt-in to other features like so:
 	runtimeWithMultiValue := wazero.NewRuntimeWithConfig(
-		wazero.NewRuntimeConfigInterpreter().WithFeatureMultiValue(true),
+		wazero.NewRuntimeConfig().WithFeatureMultiValue(true),
 		// ^^ Note: You can enable all features via WithFinishedFeatures.
 	)
 

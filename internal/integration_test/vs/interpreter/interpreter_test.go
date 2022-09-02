@@ -8,12 +8,12 @@ import (
 
 var runtime = vs.NewWazeroInterpreterRuntime
 
-func BenchmarkAllocation(b *testing.B) {
-	vs.RunBenchmarkAllocation(b, runtime)
-}
-
 func TestAllocation(t *testing.T) {
 	vs.RunTestAllocation(t, runtime)
+}
+
+func TestAllocationEx(t *testing.T) {
+	vs.RunTestAllocationEx(t, runtime)
 }
 
 func TestFactorial(t *testing.T) {
