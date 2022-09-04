@@ -11,7 +11,7 @@ import (
 )
 
 func TestJustCall(t *testing.T) {
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(t, rtm)
 
 	var err error
@@ -37,7 +37,7 @@ func TestJustCall(t *testing.T) {
 }
 
 func TestFib_Duration(t *testing.T) {
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(t, rtm)
 
 	var err error
@@ -62,7 +62,7 @@ func TestFib_Duration(t *testing.T) {
 
 func TestFib_GasLimit(t *testing.T) {
 
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(t, rtm)
 
 	var err error
@@ -113,7 +113,7 @@ func TestFib_GasLimit(t *testing.T) {
 func TestCallGoFunc2Params(t *testing.T) {
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(t, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").

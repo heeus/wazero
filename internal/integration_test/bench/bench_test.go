@@ -18,7 +18,7 @@ var caseWasm []byte
 
 func BenchmarkInvocation(b *testing.B) {
 	b.Run("interpreter", func(b *testing.B) {
-		m := instantiateHostFunctionModuleWithEngine(b, wazero.NewRuntimeConfig())
+		m := instantiateHostFunctionModuleWithEngine(b, wazero.NewRuntimeConfigInterpreter())
 		defer m.Close(testCtx)
 		runAllInvocationBenches(b, m)
 	})
@@ -26,7 +26,7 @@ func BenchmarkInvocation(b *testing.B) {
 
 func BenchmarkInitialization(b *testing.B) {
 	b.Run("interpreter", func(b *testing.B) {
-		r := createRuntime(b, wazero.NewRuntimeConfig())
+		r := createRuntime(b, wazero.NewRuntimeConfigInterpreter())
 		runInitializationBench(b, r)
 	})
 }

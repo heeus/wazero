@@ -12,7 +12,7 @@ import (
 func Benchmark_hwazero_Arg_JustCall(b *testing.B) {
 	hcallbaсkCount = 0
 	var err error
-	rtc := wazero.NewRuntimeConfig().WithMemoryLimitPages(2)
+	rtc := wazero.NewRuntimeConfigInterpreter().WithMemoryLimitPages(2)
 	rtm := wazero.NewRuntimeWithConfig(rtc)
 	require.NotNil(b, rtm)
 
@@ -45,7 +45,7 @@ func Benchmark_hwazero_Arg_CallBackNoParam(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -77,7 +77,7 @@ func Benchmark_hwazero_Arg_CallBack1Param(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -111,7 +111,7 @@ func Benchmark_hwazero_Arg_CallBack3Param(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -143,7 +143,7 @@ func Benchmark_hwazero_Arg_CallBack3Param(b *testing.B) {
 }
 
 func Benchmark_hwazero_Arg_fib20(b *testing.B) {
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
 	module, _ := rtm.InstantiateModuleFromCode(testCtx, fib)
 	defer module.Close(testCtx)
@@ -159,7 +159,7 @@ func Benchmark_hwazero_Arg_fib20(b *testing.B) {
 }
 
 func Benchmark_hwazero_Arg_Root(b *testing.B) {
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
 	module, _ := rtm.InstantiateModuleFromCode(testCtx, root)
 	defer module.Close(testCtx)

@@ -18,7 +18,7 @@ var hammers = map[string]func(t *testing.T, r wazero.Runtime){
 }
 
 func TestEngineInterpreter_hammer(t *testing.T) {
-	runAllTests(t, hammers, wazero.NewRuntimeConfig())
+	runAllTests(t, hammers, wazero.NewRuntimeConfigInterpreter())
 }
 
 func closeImportingModuleWhileInUse(t *testing.T, r wazero.Runtime) {

@@ -13,7 +13,7 @@ import (
 func Benchmark_hwazero_CallEx_JustCall(b *testing.B) {
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -47,7 +47,7 @@ func Benchmark_hwazero_CallEx_CallBackExParams(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -83,7 +83,7 @@ func Benchmark_hwazero_CallEx_CallBackNoParam(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -115,7 +115,7 @@ func Benchmark_hwazero_CallEx_CallBack1Param(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -149,7 +149,7 @@ func Benchmark_hwazero_CallEx_CallBack3Param(b *testing.B) {
 
 	hcallbaсkCount = 0
 	var err error
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 	require.NotNil(b, rtm)
 
 	host, err := rtm.NewModuleBuilder("env").
@@ -180,7 +180,7 @@ func Benchmark_hwazero_CallEx_CallBack3Param(b *testing.B) {
 }
 
 func Benchmark_hwazero_CallEx_fib20_Duration(b *testing.B) {
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
 	module, _ := rtm.InstantiateModuleFromCode(testCtx, fib)
 	defer module.Close(testCtx)
@@ -195,7 +195,7 @@ func Benchmark_hwazero_CallEx_fib20_Duration(b *testing.B) {
 }
 
 func Benchmark_hwazero_CallEx_Root(b *testing.B) {
-	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+	rtm := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 
 	module, _ := rtm.InstantiateModuleFromCode(testCtx, root)
 	defer module.Close(testCtx)

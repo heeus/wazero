@@ -389,7 +389,7 @@ func TestNewModuleBuilder_Build_Errors(t *testing.T) {
 		tc := tt
 
 		t.Run(tc.name, func(t *testing.T) {
-			_, e := tc.input(NewRuntimeConfig()).Build(testCtx)
+			_, e := tc.input(NewRuntimeConfigInterpreter()).Build(testCtx)
 			require.EqualError(t, e, tc.expectedErr)
 		})
 	}

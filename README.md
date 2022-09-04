@@ -96,7 +96,7 @@ they may answer them for you!
 There is one runtime configuration - interpreter:
 
 ```go
-r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig())
+r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter())
 ```
 
 ### Interpreter
@@ -111,7 +111,7 @@ Both runtimes pass [WebAssembly 1.0 spectests][7] on supported platforms:
 
 | Runtime     | Usage| amd64 | arm64 | others |
 |:---:|:---:|:---:|:---:|:---:|
-| Interpreter|`wazero.NewRuntimeConfig()`|✅ |✅|✅
+| Interpreter|`wazero.NewRuntimeConfigInterpreter()`|✅ |✅|✅
 
 ## Support Policy
 

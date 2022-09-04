@@ -14,7 +14,7 @@ import (
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
 
 func TestMultiValue_Interpreter(t *testing.T) {
-	testMultiValue(t, wazero.NewRuntimeConfig)
+	testMultiValue(t, wazero.NewRuntimeConfigInterpreter)
 }
 
 // multiValueWasm was compiled from testdata/multi_value.wat

@@ -26,7 +26,7 @@ func TestExampleUpToDate(t *testing.T) {
 	})
 
 	t.Run("Executable", func(t *testing.T) {
-		r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfig().WithFinishedFeatures())
+		r := wazero.NewRuntimeWithConfig(wazero.NewRuntimeConfigInterpreter().WithFinishedFeatures())
 
 		// Add WASI to satisfy import tests
 		wm, err := wasi.InstantiateSnapshotPreview1(testCtx, r)
