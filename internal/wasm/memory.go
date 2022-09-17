@@ -230,20 +230,20 @@ func (m *MemoryInstance) PageSize(_ context.Context) (result uint32) {
 //
 // See https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/#memory-instances%E2%91%A0
 func PagesToUnitOfBytes(pages uint32) string {
-	const tenbit = 1024
+	const TenBits = 1024
 	k := pages * 64
-	if k < tenbit {
+	if k < TenBits {
 		return fmt.Sprintf("%d Ki", k)
 	}
-	m := k / tenbit
-	if m < tenbit {
+	m := k / TenBits
+	if m < TenBits {
 		return fmt.Sprintf("%d Mi", m)
 	}
-	g := m / tenbit
-	if g < tenbit {
+	g := m / TenBits
+	if g < TenBits {
 		return fmt.Sprintf("%d Gi", g)
 	}
-	return fmt.Sprintf("%d Ti", g/tenbit)
+	return fmt.Sprintf("%d Ti", g/TenBits)
 }
 
 // Below are raw functions used to implement the api.Memory API:
