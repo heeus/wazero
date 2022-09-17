@@ -404,6 +404,10 @@ func (e *mockModuleEngine) Name() string {
 	return e.name
 }
 
+func (e *mockModuleEngine) NewCallEngine() api.ICallEngine {
+	return nil
+}
+
 // Call implements the same method as documented on wasm.ModuleEngine.
 func (e *mockModuleEngine) Call(ctx context.Context, callCtx *CallContext, f *FunctionInstance, _ ...uint64) (results []uint64, err error) {
 	if e.callFailIndex >= 0 && f.Idx == Index(e.callFailIndex) {
@@ -411,6 +415,16 @@ func (e *mockModuleEngine) Call(ctx context.Context, callCtx *CallContext, f *Fu
 		return
 	}
 	return
+}
+
+// CallEx implements the same method as documented on wasm.ModuleEngine.
+func (e *mockModuleEngine) CallEx(ctx context.Context, m *CallContext, f *FunctionInstance, ce api.ICallEngine, ceParams *api.CallEngineParams, params ...uint64) (results []uint64, err error) {
+	return e.Call(ctx, m, f, params...)
+}
+
+// CallEx implements the same method as documented on wasm.ModuleEngine.
+func (e *mockModuleEngine) CallExArg(ctx context.Context, m *CallContext, f *FunctionInstance, ce api.ICallEngine, ceParams *api.CallEngineParams, params []uint64) (results []uint64, err error) {
+	return e.Call(ctx, m, f, params...)
 }
 
 // Close implements the same method as documented on wasm.ModuleEngine.

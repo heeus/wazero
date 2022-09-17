@@ -12,9 +12,6 @@ import (
 	"github.com/heeus/wazero/wasi"
 )
 
-// testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.
-var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")
-
 // caseWasm was compiled from TinyGo testdata/case.go
 //go:embed testdata/case.wasm
 var caseWasm []byte

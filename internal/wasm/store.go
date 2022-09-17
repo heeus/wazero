@@ -127,6 +127,10 @@ type (
 		// specific to Wasm functions.
 		GoFunc *reflect.Value
 
+		// GoFuncInstance holds the runtime pointer on host function.
+		// This is not nil when Kind == FunctionKindGoStackParams.
+		GoFuncInstance interface{}
+
 		// Fields above here are settable prior to instantiation. Below are set by the Store during instantiation.
 
 		// ModuleInstance holds the pointer to the module instance to which this function belongs.
@@ -480,10 +484,12 @@ func (s *Store) resolveImports(module *Module) (
 			expectedType := module.TypeSection[i.DescFunc]
 			importedFunction := imported.Function
 
-			actualType := importedFunction.Type
-			if !expectedType.EqualsSignature(actualType.Params, actualType.Results) {
-				err = errorInvalidImport(i, idx, fmt.Errorf("signature mismatch: %s != %s", expectedType, actualType))
-				return
+			if importedFunction.Kind != FunctionKindGoStackArgs {
+				actualType := importedFunction.Type
+				if !expectedType.EqualsSignature(actualType.Params, actualType.Results) {
+					err = errorInvalidImport(i, idx, fmt.Errorf("signature mismatch: %s != %s", expectedType, actualType))
+					return
+				}
 			}
 
 			importedFunctions = append(importedFunctions, importedFunction)

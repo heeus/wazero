@@ -40,7 +40,7 @@ func (c *RuntimeConfig) clone() *RuntimeConfig {
 	}
 }
 
-// NewRuntimeConfigInterpreter interprets WebAssembly modules instead of compiling them into assembly.
+// NewRuntimeConfig interprets WebAssembly modules instead of compiling them into assembly.
 func NewRuntimeConfigInterpreter() *RuntimeConfig {
 	ret := engineLessConfig.clone()
 	ret.newEngine = interpreter.NewEngine
