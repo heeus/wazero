@@ -6,9 +6,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.

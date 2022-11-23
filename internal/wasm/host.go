@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/internal/wasmdebug"
+	"github.com/ivvist/wazero/experimental"
+	"github.com/ivvist/wazero/internal/wasmdebug"
 )
 
 // NewHostModule is defined internally for use in WASI tests and to keep the code size in the root directory small.

@@ -3,7 +3,7 @@ package text
 import (
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 func TestTokenType_String(t *testing.T) {

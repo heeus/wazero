@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/heeus/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/leb128"
 )
 
 // decodeLimitsType returns the `limitsType` (min, max) decoded with the WebAssembly 1.0 (20191205) Binary Format.

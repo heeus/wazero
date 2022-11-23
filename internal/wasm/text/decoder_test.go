@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 func TestDecodeModule(t *testing.T) {

@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/heeus/wazero/internal/ieee754"
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/ieee754"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 func decodeConstantExpression(r *bytes.Reader, enabledFeatures wasm.Features) (*wasm.ConstantExpression, error) {

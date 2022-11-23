@@ -5,9 +5,9 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasmruntime"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/wasmruntime"
 )
 
 func TestFuncName(t *testing.T) {

@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wasm/text"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/wasm/text"
 )
 
 // ctx is an arbitrary, non-default context.

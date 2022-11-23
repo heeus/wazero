@@ -6,7 +6,7 @@ import (
 	"math"
 	"reflect"
 
-	"github.com/heeus/wazero/api"
+	"github.com/ivvist/wazero/api"
 )
 
 // FunctionKind identifies the type of function that can be called.

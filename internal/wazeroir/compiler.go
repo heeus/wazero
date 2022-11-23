@@ -9,9 +9,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/heeus/wazero/internal/buildoptions"
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/buildoptions"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 type controlFrameKind byte

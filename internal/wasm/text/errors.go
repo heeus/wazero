@@ -3,7 +3,7 @@ package text
 import (
 	"fmt"
 
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 // FormatError allows control over the format of errors parsing the WebAssembly Text Format.

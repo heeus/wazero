@@ -7,9 +7,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/wasi"
+	"github.com/ivvist/wazero"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/wasi"
 )
 
 // greetWasm was compiled using `tinygo build -o greet.wasm -scheduler=none --no-debug -target=wasi greet.go`

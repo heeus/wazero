@@ -7,9 +7,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/wasi"
+	"github.com/ivvist/wazero"
+	"github.com/ivvist/wazero/experimental"
+	"github.com/ivvist/wazero/wasi"
 )
 
 // loggerFactory implements experimental.FunctionListenerFactory to log all function calls to the console.

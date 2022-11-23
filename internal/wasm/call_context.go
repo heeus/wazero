@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/sys"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/sys"
 )
 
 // compile time check to ensure CallContext implements api.Module

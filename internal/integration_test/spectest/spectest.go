@@ -10,14 +10,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/u64"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wasm/binary"
-	"github.com/heeus/wazero/internal/wasm/text"
-	"github.com/heeus/wazero/internal/wasmruntime"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/u64"
+	"github.com/ivvist/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/wasm/binary"
+	"github.com/ivvist/wazero/internal/wasm/text"
+	"github.com/ivvist/wazero/internal/wasmruntime"
 )
 
 //go:embed testdata/*.wasm
@@ -297,7 +297,7 @@ func Run(t *testing.T, testDataFS embed.FS, newEngine func(wasm.Features) wasm.E
 	}
 
 	// If the go:embed path resolution was wrong, this fails.
-	// https://github.com/heeus/wazero/issues/247
+	// https://github.com/ivvist/wazero/issues/247
 	require.True(t, len(jsonfiles) > 1, "len(jsonfiles)=%d (not greater than one)", len(jsonfiles))
 
 	for _, f := range jsonfiles {

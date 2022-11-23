@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 // dataSegmentPrefix represents three types of data segments.

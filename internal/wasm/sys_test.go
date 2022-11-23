@@ -9,7 +9,7 @@ import (
 	"testing"
 	"testing/fstest"
 
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 func TestDefaultSysContext(t *testing.T) {

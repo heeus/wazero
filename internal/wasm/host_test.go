@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 // wasiAPI simulates the real WASI api

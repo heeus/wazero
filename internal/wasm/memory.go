@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/heeus/wazero/api"
+	"github.com/ivvist/wazero/api"
 )
 
 const (

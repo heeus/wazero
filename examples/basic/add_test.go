@@ -3,8 +3,8 @@ package add
 import (
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/maintester"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/testing/maintester"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 // Test_main ensures the following will work:

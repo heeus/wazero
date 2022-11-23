@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/u64"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/u64"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 // ModuleBuilder is a way to define a WebAssembly 1.0 (20191205) in Go.

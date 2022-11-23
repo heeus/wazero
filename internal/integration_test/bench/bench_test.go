@@ -7,9 +7,9 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/wasi"
+	"github.com/ivvist/wazero"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/wasi"
 )
 
 // caseWasm was compiled from TinyGo testdata/case.go

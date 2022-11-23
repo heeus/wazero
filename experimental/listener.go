@@ -3,13 +3,13 @@ package experimental
 import (
 	"context"
 
-	"github.com/heeus/wazero/api"
+	"github.com/ivvist/wazero/api"
 )
 
 // FunctionListenerFactoryKey is a context.Context Value key. Its associated value should be a FunctionListenerFactory.
 //
 // Note: This is interpreter-only for now!
-// See https://github.com/heeus/wazero/issues/451
+// See https://github.com/ivvist/wazero/issues/451
 type FunctionListenerFactoryKey struct{}
 
 // FunctionListenerFactory returns FunctionListeners to be notified when a function is called.

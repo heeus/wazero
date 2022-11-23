@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 func ensureElementKindFuncRef(r *bytes.Reader) error {

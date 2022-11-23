@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/heeus/wazero"
+	"github.com/ivvist/wazero"
 )
 
 // main shows how to define, import and call a Go-defined function from a

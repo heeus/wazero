@@ -5,8 +5,8 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 // wasiArg was compiled from testdata/wasi_arg.wat

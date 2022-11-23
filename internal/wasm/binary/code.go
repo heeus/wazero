@@ -6,8 +6,8 @@ import (
 	"io"
 	"math"
 
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 func decodeCode(r *bytes.Reader) (*wasm.Code, error) {

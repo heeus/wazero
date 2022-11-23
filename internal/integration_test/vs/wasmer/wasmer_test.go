@@ -5,7 +5,7 @@ package wasmer
 import (
 	"testing"
 
-	"github.com/heeus/wazero/internal/integration_test/vs"
+	"github.com/ivvist/wazero/internal/integration_test/vs"
 )
 
 var runtime = newWasmerRuntime

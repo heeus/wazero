@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/heeus/wazero/internal/buildoptions"
-	"github.com/heeus/wazero/internal/testing/enginetest"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wazeroir"
+	"github.com/ivvist/wazero/internal/buildoptions"
+	"github.com/ivvist/wazero/internal/testing/enginetest"
+	"github.com/ivvist/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/wazeroir"
 )
 
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.

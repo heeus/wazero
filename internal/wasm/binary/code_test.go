@@ -3,8 +3,8 @@ package binary
 import (
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 var addLocalZeroLocalTwo = []byte{wasm.OpcodeLocalGet, 0, wasm.OpcodeLocalGet, 2, wasm.OpcodeI32Add, wasm.OpcodeEnd}

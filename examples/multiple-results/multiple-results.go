@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
+	"github.com/ivvist/wazero"
+	"github.com/ivvist/wazero/api"
 )
 
 // main implements functions with multiple returns values, using both an approach portable with any WebAssembly 1.0

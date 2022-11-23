@@ -1,7 +1,7 @@
 package binary
 
 import (
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 var sizePrefixedName = []byte{4, 'n', 'a', 'm', 'e'}

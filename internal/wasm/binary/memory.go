@@ -3,7 +3,7 @@ package binary
 import (
 	"bytes"
 
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 // decodeMemory returns the api.Memory decoded with the WebAssembly 1.0 (20191205) Binary Format.

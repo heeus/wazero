@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 func TestModule_ValidateFunction_validateFunctionWithMaxStackValues(t *testing.T) {

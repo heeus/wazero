@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 var (

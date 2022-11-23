@@ -14,10 +14,10 @@ import (
 	"path"
 	"time"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero"
+	"github.com/ivvist/wazero/api"
+	"github.com/ivvist/wazero/experimental"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 // ModuleSnapshotPreview1 is the module name WASI functions are exported into

@@ -7,10 +7,10 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/heeus/wazero/api"
-	experimentalapi "github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/internal/ieee754"
-	"github.com/heeus/wazero/internal/leb128"
+	"github.com/ivvist/wazero/api"
+	experimentalapi "github.com/ivvist/wazero/experimental"
+	"github.com/ivvist/wazero/internal/ieee754"
+	"github.com/ivvist/wazero/internal/leb128"
 )
 
 type (

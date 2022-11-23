@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 func uint32Ptr(v uint32) *uint32 {

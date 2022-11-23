@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 func Benchmark_hwazero_Old_JustCall(b *testing.B) {

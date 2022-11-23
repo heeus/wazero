@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/ivvist/wazero/internal/wasm"
 )
 
 var testCtx = context.WithValue(context.Background(), struct{}{}, "arbitrary")

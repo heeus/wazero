@@ -4,8 +4,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/ivvist/wazero/internal/leb128"
+	"github.com/ivvist/wazero/internal/testing/require"
 )
 
 func uint32Ptr(v uint32) *uint32 {
