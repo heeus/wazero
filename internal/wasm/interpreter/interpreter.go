@@ -648,6 +648,7 @@ func (me *moduleEngine) doCall(ctx context.Context, callCtx *wasm.CallContext, f
 			ce.pushValue(param)
 		}
 		results = ce.callGoFuncWithStack(ctx, callCtx, compiled, stackpos)
+		ce.stack.Reset(stackpos)
 	} else {
 		results = ce.callGoFunc(ctx, callCtx, compiled, params)
 	}
@@ -1988,7 +1989,6 @@ func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.Cal
 	if f.source.Kind == wasm.FunctionKindGoStackArgs {
 		paramCount := ce.stack.GetLen() - stackpos
 		results = wasm.CallGoFuncStackParams(f.source, ce.stack.GetTop(paramCount))
-		ce.stack.Reset(stackpos)
 	} else {
 		params = wasm.PopGoFuncParams(f.source, ce.popValue)
 		results = ce.callGoFunc(ctx, callCtx, f, params)
