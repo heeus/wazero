@@ -1991,7 +1991,6 @@ func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.Cal
 		paramCount := ce.stack.GetLen() - stackpos
 		results = wasm.CallGoFuncStackParams(f.source, ce.stack.GetTop(paramCount))
 		ce.stack.Reset(stackpos)
-		stackpos = stackpos - paramCount
 	} else {
 		params = wasm.PopGoFuncParams(f.source, ce.popValue)
 		results = ce.callGoFunc(ctx, callCtx, f, params)
