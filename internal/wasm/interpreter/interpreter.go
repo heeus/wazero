@@ -1985,6 +1985,7 @@ func (ce *callEngine) popMemoryOffset(op *interpreterOp) uint32 {
 
 func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function, stackpos int) []uint64 {
 	var params []uint64
+
 	var results []uint64
 	if f.source.Kind == wasm.FunctionKindGoStackArgs {
 		paramCount := ce.stack.GetLen() - stackpos
