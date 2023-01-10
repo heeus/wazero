@@ -187,15 +187,15 @@ func Benchmark_hwazero_Old_Add2Param(b *testing.B) {
 	require.Nil(b, err)
 	defer module.Close(testCtx)
 
-	add := module.ExportedFunction("add")
-	var ce api.ICallEngine = add.NewCallEngine()
+	addEx := module.ExportedFunction("add")
+	var ce api.ICallEngine = addEx.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	var res []uint64
 	b.ResetTimer()
 	args := []uint64{12, 14}
 	for i := 0; i < b.N; i++ {
-		res, err = add.CallExArg(testCtx, ce, &cnp, args)
+		res, err = addEx.CallExArg(testCtx, ce, &cnp, args)
 
 	}
 	require.Equal(b, res[0], uint64(26))
