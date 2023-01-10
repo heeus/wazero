@@ -178,11 +178,12 @@ func (m *Module) buildHostFunctions(
 		fn := m.HostFunctionSection[idx]
 		finst := m.HostFunctionInstanceSection[idx]
 		f := &FunctionInstance{
-			Kind:           kind(fn.Type()),
-			Type:           m.TypeSection[typeIndex],
-			GoFunc:         fn,
-			GoFuncInstance: finst,
-			Idx:            Index(idx),
+			Kind:               kind(fn.Type()),
+			Type:               m.TypeSection[typeIndex],
+			GoFunc:             fn,
+			GoFuncInstance:     finst,
+			Idx:                Index(idx),
+			ExpectedParamCount: -1,
 		}
 		name := functionNames[f.Idx].Name
 		f.moduleName = moduleName
