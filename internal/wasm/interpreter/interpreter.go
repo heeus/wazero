@@ -1991,9 +1991,9 @@ func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.Cal
 	} else {
 		params = wasm.PopGoFuncParams(f.source, ce.popValue)
 		results = ce.callGoFunc(ctx, callCtx, f, params)
-		for _, v := range results {
-			ce.pushValue(v)
-		}
+	}
+	for _, v := range results {
+		ce.pushValue(v)
 	}
 	return results
 }
