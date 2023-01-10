@@ -107,6 +107,8 @@ type (
 	// FunctionInstance represents a function instance in a Store.
 	// See https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/#function-instances%E2%91%A0
 	FunctionInstance struct {
+		// ExpectedParamCount -  count of params described in WASM for imported function type of FunctionKindGoStackArgs
+		ExpectedParamCount int
 		// DebugName is for debugging purpose, and is used to augment stack traces.
 		DebugName string
 
@@ -484,7 +486,9 @@ func (s *Store) resolveImports(module *Module) (
 			expectedType := module.TypeSection[i.DescFunc]
 			importedFunction := imported.Function
 
-			if importedFunction.Kind != FunctionKindGoStackArgs {
+			if importedFunction.Kind == FunctionKindGoStackArgs {
+				importedFunction.ExpectedParamCount = len(expectedType.Params)
+			} else {
 				actualType := importedFunction.Type
 				if !expectedType.EqualsSignature(actualType.Params, actualType.Results) {
 					err = errorInvalidImport(i, idx, fmt.Errorf("signature mismatch: %s != %s", expectedType, actualType))

@@ -643,12 +643,10 @@ func (me *moduleEngine) doCall(ctx context.Context, callCtx *wasm.CallContext, f
 			f.FunctionListener.After(ctx, nil, results)
 		}
 	} else if f.Kind == wasm.FunctionKindGoStackArgs {
-		stackpos := ce.stack.GetLen()
 		for _, param := range params {
 			ce.pushValue(param)
 		}
-		results = ce.callGoFuncWithStack(ctx, callCtx, compiled, stackpos)
-		ce.stack.Reset(stackpos)
+		results = ce.callGoFuncWithStack(ctx, callCtx, compiled)
 	} else {
 		results = ce.callGoFunc(ctx, callCtx, compiled, params)
 	}
@@ -745,7 +743,6 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 	opdur := ce.duration
 	startTime := ce.startTime
 	timefunc := ce.getCtxTime
-	stackpos := ce.stack.GetLen()
 
 	incFrameAndGas := func(frm *callFrame, gas *uint64) {
 		frm.pc++
@@ -819,7 +816,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				ce.opcounter = opcounter
 				f := functions[op.us[0]]
 				if f.hostFn != nil {
-					ce.callGoFuncWithStack(ctx, callCtx, f, stackpos)
+					ce.callGoFuncWithStack(ctx, callCtx, f)
 					callopgas = callopgas + gasUnity
 				} else if listener != nil {
 					ctx, err = ce.callNativeFuncWithListener(ctx, callCtx, f, listener)
@@ -854,7 +851,7 @@ func (ce *callEngine) callNativeFunc(ctx context.Context, callCtx *wasm.CallCont
 				// Call in.
 				ce.opgas = callopgas
 				if tf.hostFn != nil {
-					ce.callGoFuncWithStack(ctx, callCtx, tf, stackpos)
+					ce.callGoFuncWithStack(ctx, callCtx, tf)
 				} else if listener != nil {
 					ctx, err = ce.callNativeFuncWithListener(ctx, callCtx, f, listener)
 					if nil != err {
@@ -1983,14 +1980,14 @@ func (ce *callEngine) popMemoryOffset(op *interpreterOp) uint32 {
 	return uint32(offset)
 }
 
-func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function, stackpos int) []uint64 {
+func (ce *callEngine) callGoFuncWithStack(ctx context.Context, callCtx *wasm.CallContext, f *function) []uint64 {
 	var params []uint64
 
 	var results []uint64
 	if f.source.Kind == wasm.FunctionKindGoStackArgs {
-		paramCount := ce.stack.GetLen() - stackpos
+		paramCount := f.source.ExpectedParamCount
 		results = wasm.CallGoFuncStackParams(f.source, ce.stack.GetTop(paramCount))
-		ce.stack.Reset(stackpos)
+		ce.stack.Reset(ce.stack.GetLen() - paramCount)
 	} else {
 		params = wasm.PopGoFuncParams(f.source, ce.popValue)
 		results = ce.callGoFunc(ctx, callCtx, f, params)
