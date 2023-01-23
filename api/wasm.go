@@ -195,6 +195,13 @@ type MutableGlobal interface {
 // Note: This includes all value types available in WebAssembly 1.0 (20191205) and all are encoded little-endian.
 // See https://www.w3.org/TR/2019/REC-wasm-core-1-20191205/#storage%E2%91%A0
 type Memory interface {
+
+	// Backup returns a complete memory backup
+	Backup() Memory
+
+	// Restore restores the memory state from backup
+	Restore(backup Memory)
+
 	// Size returns the size in bytes available. Ex. If the underlying memory has 1 page: 65536
 	//
 	// Note: this will not grow during a host function call, even if the underlying memory can.  Ex. If the underlying

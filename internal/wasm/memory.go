@@ -37,6 +37,28 @@ type MemoryInstance struct {
 	Min, Cap, Max uint32
 }
 
+// Backup returns a complete memory backup
+func (m *MemoryInstance) Backup() api.Memory {
+	backup := MemoryInstance{
+		Min:    m.Min,
+		Max:    m.Max,
+		Cap:    m.Cap,
+		Buffer: make([]byte, len(m.Buffer)),
+	}
+	copy(backup.Buffer[0:], m.Buffer[0:])
+	return &backup
+}
+
+// Restore restores the memory state from backup
+func (m *MemoryInstance) Restore(backup api.Memory) {
+	bm := backup.(*MemoryInstance)
+	m.Max = bm.Max
+	m.Min = bm.Min
+	m.Cap = bm.Cap
+	m.Buffer = make([]byte, len(bm.Buffer))
+	copy(m.Buffer[0:], bm.Buffer[0:])
+}
+
 // Size implements the same method as documented on api.Memory.
 func (m *MemoryInstance) Size(_ context.Context) uint32 {
 	// Note: If you use the context.Context param, don't forget to coerce nil to context.Background()!
