@@ -29,8 +29,8 @@ func Benchmark_hwazero_CallEx_JustCall(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	justCall := module.ExportedFunction("justCall")
-	var ce api.ICallEngine = justCall.NewCallEngine()
 	cep := api.CallEngineParams{}
 
 	b.ResetTimer()
@@ -63,8 +63,8 @@ func Benchmark_hwazero_CallEx_CallBackExParams(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	callbackp := module.ExportedFunction("doCallbackp")
-	var ce api.ICallEngine = callbackp.NewCallEngine()
 	cep := api.CallEngineParams{Duration: 5 * time.Second, Gaslimit: 300}
 
 	var p1 uint64 = 14
@@ -97,8 +97,8 @@ func Benchmark_hwazero_CallEx_CallBackNoParam(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	callback := module.ExportedFunction("doCallback")
-	var ce api.ICallEngine = callback.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	b.ResetTimer()
@@ -131,8 +131,8 @@ func Benchmark_hwazero_CallEx_CallBack1Param(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	callbackp := module.ExportedFunction("doCallbackp1")
-	var ce api.ICallEngine = callbackp.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	b.ResetTimer()
@@ -165,8 +165,8 @@ func Benchmark_hwazero_CallEx_CallBack3Param(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	callbackp3 := module.ExportedFunction("doCallbackp")
-	var ce api.ICallEngine = callbackp3.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	b.ResetTimer()
@@ -185,8 +185,8 @@ func Benchmark_hwazero_CallEx_fib20_Duration(b *testing.B) {
 	module, _ := rtm.InstantiateModuleFromCode(testCtx, fib)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	fibonacci := module.ExportedFunction("fibonacci")
-	var ce api.ICallEngine = fibonacci.NewCallEngine()
 	cep := api.CallEngineParams{Duration: 10 * time.Second}
 
 	for i := 0; i < b.N; i++ {
@@ -200,8 +200,8 @@ func Benchmark_hwazero_CallEx_Root(b *testing.B) {
 	module, _ := rtm.InstantiateModuleFromCode(testCtx, root)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	root := module.ExportedFunction("root")
-	var ce api.ICallEngine = root.NewCallEngine()
 	cep := api.CallEngineParams{}
 
 	for i := 0; i < b.N; i++ {

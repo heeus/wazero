@@ -59,8 +59,8 @@ func Benchmark_hwazero_Arg_CallBackNoParam(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	callback := module.ExportedFunction("doCallback")
-	var ce api.ICallEngine = callback.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	b.ResetTimer()
@@ -93,8 +93,8 @@ func Benchmark_hwazero_Arg_CallBack1Param(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	callbackp := module.ExportedFunction("doCallbackp1")
-	var ce api.ICallEngine = callbackp.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	par := []uint64{2, 3}
@@ -127,8 +127,8 @@ func Benchmark_hwazero_Arg_CallBack3Param(b *testing.B) {
 	require.NoError(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	callbackp3 := module.ExportedFunction("doCallbackp")
-	var ce api.ICallEngine = callbackp3.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	b.ResetTimer()
@@ -148,8 +148,8 @@ func Benchmark_hwazero_Arg_fib20(b *testing.B) {
 	module, _ := rtm.InstantiateModuleFromCode(testCtx, fib)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	fibonacci := module.ExportedFunction("fibonacci")
-	var ce api.ICallEngine = fibonacci.NewCallEngine()
 	cep := api.CallEngineParams{}
 
 	args := []uint64{20}
@@ -164,8 +164,8 @@ func Benchmark_hwazero_Arg_Root(b *testing.B) {
 	module, _ := rtm.InstantiateModuleFromCode(testCtx, root)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	root := module.ExportedFunction("root")
-	var ce api.ICallEngine = root.NewCallEngine()
 	cep := api.CallEngineParams{}
 
 	par := []uint64{1000}
@@ -187,8 +187,8 @@ func Benchmark_hwazero_Old_Add2Param(b *testing.B) {
 	require.Nil(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	addEx := module.ExportedFunction("add")
-	var ce api.ICallEngine = addEx.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	var res []uint64
@@ -219,8 +219,8 @@ func Benchmark_hwazero_Arg_AddParam(b *testing.B) {
 	require.Nil(b, err)
 	defer module.Close(testCtx)
 
+	var ce api.ICallEngine = module.NewCallEngine()
 	add := module.ExportedFunction("add")
-	var ce api.ICallEngine = add.NewCallEngine()
 	cnp := api.CallEngineParams{}
 
 	var res []uint64

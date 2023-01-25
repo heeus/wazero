@@ -233,3 +233,9 @@ func (m *CallContext) ExportedGlobal(name string) api.Global {
 		panic(fmt.Errorf("BUG: unknown value type %X", valType))
 	}
 }
+
+// NewCallEngine s.e.
+func (m *CallContext) NewCallEngine() api.ICallEngine {
+	ce := m.module.Engine.NewCallEngine()
+	return ce
+}

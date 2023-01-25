@@ -18,10 +18,10 @@ type StackParamFuncType = func([]uint64) []uint64
 // only definable as a value type.
 //
 // The following describes how to convert between Wasm and Golang types:
-//  * ValueTypeI32 - uint64(uint32,int32)
-//  * ValueTypeI64 - uint64(int64)
-//  * ValueTypeF32 - EncodeF32 DecodeF32 from float32
-//  * ValueTypeF64 - EncodeF64 DecodeF64 from float64
+//   - ValueTypeI32 - uint64(uint32,int32)
+//   - ValueTypeI64 - uint64(int64)
+//   - ValueTypeF32 - EncodeF32 DecodeF32 from float32
+//   - ValueTypeF64 - EncodeF64 DecodeF64 from float64
 //
 // Ex. Given a Text Format type use (param i64) (result i64), no conversion is necessary.
 //
@@ -111,6 +111,9 @@ type Module interface {
 
 	// ExportedGlobal a global exported from this module or nil if it wasn't.
 	ExportedGlobal(name string) Global
+
+	// NewCallEngine s.e.
+	NewCallEngine() ICallEngine
 }
 
 // Function is a WebAssembly 1.0 (20191205) function exported from an instantiated module (wazero.Runtime InstantiateModule).
@@ -275,7 +278,7 @@ type Memory interface {
 type ICallEngine interface {
 }
 
-//CallEngineParams s.e.
+// CallEngineParams s.e.
 type CallEngineParams struct {
 	Duration time.Duration
 	Gaslimit uint64
