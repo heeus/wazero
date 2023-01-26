@@ -114,6 +114,9 @@ type Module interface {
 
 	// NewCallEngine s.e.
 	NewCallEngine() ICallEngine
+
+	// Exports  - returns list of exported functions
+	Exports() *[]string
 }
 
 // Function is a WebAssembly 1.0 (20191205) function exported from an instantiated module (wazero.Runtime InstantiateModule).

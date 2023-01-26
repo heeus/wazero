@@ -29,7 +29,8 @@ type CallContext struct {
 	// call stack, where the CallContext can change depending on where memory is defined and who defines the calling
 	// function. When we rename this again, we should try to capture as many key points possible on the docs.
 
-	module *ModuleInstance
+	exports []string
+	module  *ModuleInstance
 	// memory is returned by Memory and overridden WithMemory
 	memory api.Memory
 	store  *Store
@@ -238,4 +239,14 @@ func (m *CallContext) ExportedGlobal(name string) api.Global {
 func (m *CallContext) NewCallEngine() api.ICallEngine {
 	ce := m.module.Engine.NewCallEngine()
 	return ce
+}
+
+// Exports - array of names of exported functions
+func (m *CallContext) Exports() *[]string {
+	mp := m.module.Exports
+	m.exports = nil
+	for name, _ := range mp {
+		m.exports = append(m.exports, name)
+	}
+	return &m.exports
 }
