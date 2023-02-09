@@ -56,13 +56,14 @@ func (m *MemoryInstance) Restore(backup api.Memory) {
 	m.Min = bm.Min
 	m.Cap = bm.Cap
 
-	if len(m.Buffer) > len(bm.Buffer) {
+	/*if len(m.Buffer) > len(bm.Buffer) {
 		m.Buffer = m.Buffer[0:len(bm.Buffer)]
 	} else if len(m.Buffer) < len(bm.Buffer) {
 		m.Buffer = make([]byte, len(bm.Buffer))
 	}
-
-	copy(m.Buffer[0:], bm.Buffer[0:])
+	copy(m.Buffer[0:], bm.Buffer[0:])*/
+	m.Buffer = make([]byte, len(bm.Buffer))
+	copy(m.Buffer, bm.Buffer)
 }
 
 // Size implements the same method as documented on api.Memory.
