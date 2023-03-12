@@ -668,11 +668,13 @@ func (me *moduleEngine) Call(ctx context.Context, m *wasm.CallContext, f *wasm.F
 }
 
 func (me *moduleEngine) initcallEnging(ce api.ICallEngine, ceParams *api.CallEngineParams) {
-	if ce == nil {
-		cenew := newcallEngine()
-		me.callEng = &cenew
-	} else {
-		me.callEng = ce.(*callEngine)
+	if me.callEng == nil {
+		if ce == nil {
+			cenew := newcallEngine()
+			me.callEng = &cenew
+		} else {
+			me.callEng = ce.(*callEngine)
+		}
 	}
 	if ceParams != nil {
 		if ceParams.Duration > 0 {
