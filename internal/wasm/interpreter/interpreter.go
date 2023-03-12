@@ -603,7 +603,6 @@ func (me *moduleEngine) doCall(ctx context.Context, callCtx *wasm.CallContext, f
 		}
 	}
 	ce := me.callEng
-	ce.reset(0)
 	defer func() {
 		// If the module closed during the call, and the call didn't err for another reason, set an ExitError.
 		if err == nil {
