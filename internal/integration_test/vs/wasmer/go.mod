@@ -1,6 +1,6 @@
 module github.com/voedger/wazero/internal/integration_test/vs/wasmer
 
-go 1.18
+go 1.20
 
 require (
 	github.com/voedger/wazero v0.0.0
