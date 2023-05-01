@@ -3,8 +3,8 @@ package binary
 import (
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/wasm"
 )
 
 // TestDecodeModule relies on unit tests for Module.Encode, specifically that the encoding is both known and correct.

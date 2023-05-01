@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/internal/testing/require"
 )
 
 func TestJustCall(t *testing.T) {

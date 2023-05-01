@@ -17,10 +17,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wasmdebug"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/wasmdebug"
 )
 
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.

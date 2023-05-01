@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/heeus/wazero/api"
+	"github.com/voedger/wazero/api"
 )
 
 type mutableGlobal struct {

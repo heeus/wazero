@@ -6,7 +6,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/testing/require"
 )
 
 func TestCallContext_WithMemory(t *testing.T) {

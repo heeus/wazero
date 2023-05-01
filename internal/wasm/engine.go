@@ -3,7 +3,7 @@ package wasm
 import (
 	"context"
 
-	"github.com/heeus/wazero/api"
+	"github.com/voedger/wazero/api"
 )
 
 // Engine is a Store-scoped mechanism to compile functions declared or imported by a module.

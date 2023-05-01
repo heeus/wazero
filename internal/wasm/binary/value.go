@@ -6,8 +6,8 @@ import (
 	"io"
 	"unicode/utf8"
 
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/leb128"
+	"github.com/voedger/wazero/internal/wasm"
 )
 
 var noValType = []byte{0}

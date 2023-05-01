@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/wasi"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/wasi"
 )
 
 // catFS is an embedded filesystem limited to test.txt

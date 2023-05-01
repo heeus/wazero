@@ -15,12 +15,12 @@ import (
 	"testing"
 	"testing/fstest"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/sys"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/experimental"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/wasm"
+	"github.com/voedger/wazero/sys"
 )
 
 // compile-time check to ensure fakeSys implements experimental.Sys.

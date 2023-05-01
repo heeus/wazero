@@ -8,8 +8,8 @@ import (
 	"math/rand"
 	"strconv"
 
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/leb128"
+	"github.com/voedger/wazero/internal/wasm"
 )
 
 // Gen generates a pseudo random compilable module based on `seed`.

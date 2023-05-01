@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/api"
 )
 
 // main shows how to override a module or function name hard-coded in a

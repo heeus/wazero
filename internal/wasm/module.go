@@ -9,11 +9,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/heeus/wazero/api"
-	experimental "github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/internal/ieee754"
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasmdebug"
+	"github.com/voedger/wazero/api"
+	experimental "github.com/voedger/wazero/experimental"
+	"github.com/voedger/wazero/internal/ieee754"
+	"github.com/voedger/wazero/internal/leb128"
+	"github.com/voedger/wazero/internal/wasmdebug"
 )
 
 // DecodeModule parses the configured source into a Module. This function returns when the source is exhausted or

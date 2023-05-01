@@ -8,7 +8,7 @@ import (
 
 	"github.com/wasmerio/wasmer-go/wasmer"
 
-	"github.com/heeus/wazero/internal/integration_test/vs"
+	"github.com/voedger/wazero/internal/integration_test/vs"
 )
 
 var wasiEnv *wasmer.WasiEnvironment

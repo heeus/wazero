@@ -4,9 +4,9 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wasm/binary"
-	"github.com/heeus/wazero/internal/wasm/text"
+	"github.com/voedger/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/wasm/binary"
+	"github.com/voedger/wazero/internal/wasm/text"
 )
 
 // example holds the latest supported features as described in the comments of exampleText

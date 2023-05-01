@@ -8,9 +8,9 @@ import (
 	"math/rand"
 	"os"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/wasi"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/experimental"
+	"github.com/voedger/wazero/wasi"
 )
 
 type fakeSys struct{}

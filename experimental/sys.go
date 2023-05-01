@@ -2,7 +2,7 @@ package experimental
 
 // SysKey is a context.Context Value key. Its associated value should be a Sys.
 //
-// See https://github.com/heeus/wazero/issues/491
+// See https://github.com/voedger/wazero/issues/491
 type SysKey struct{}
 
 // Sys controls experimental aspects currently only used by WASI.

@@ -5,9 +5,9 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasmruntime"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/wasmruntime"
 )
 
 // testCtx is an arbitrary, non-default context. Non-nil also prevents linter errors.

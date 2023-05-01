@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/leb128"
+	"github.com/voedger/wazero/internal/wasm"
 )
 
 func decodeTypeSection(enabledFeatures wasm.Features, r *bytes.Reader) ([]*wasm.FunctionType, error) {

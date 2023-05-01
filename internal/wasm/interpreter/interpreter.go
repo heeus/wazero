@@ -10,14 +10,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/internal/buildoptions"
-	"github.com/heeus/wazero/internal/moremath"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wasmdebug"
-	"github.com/heeus/wazero/internal/wasmruntime"
-	"github.com/heeus/wazero/internal/wazeroir"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/experimental"
+	"github.com/voedger/wazero/internal/buildoptions"
+	"github.com/voedger/wazero/internal/moremath"
+	"github.com/voedger/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/wasmdebug"
+	"github.com/voedger/wazero/internal/wasmruntime"
+	"github.com/voedger/wazero/internal/wazeroir"
 )
 
 const (

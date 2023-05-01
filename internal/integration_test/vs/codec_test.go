@@ -4,12 +4,12 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wasm/binary"
-	"github.com/heeus/wazero/internal/wasm/text"
-	"github.com/heeus/wazero/wasi"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/wasm/binary"
+	"github.com/voedger/wazero/internal/wasm/text"
+	"github.com/voedger/wazero/wasi"
 )
 
 func TestExampleUpToDate(t *testing.T) {

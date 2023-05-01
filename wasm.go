@@ -6,12 +6,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/heeus/wazero/api"
-	experimentalapi "github.com/heeus/wazero/experimental"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wasm/binary"
-	"github.com/heeus/wazero/internal/wasm/text"
-	"github.com/heeus/wazero/sys"
+	"github.com/voedger/wazero/api"
+	experimentalapi "github.com/voedger/wazero/experimental"
+	"github.com/voedger/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/wasm/binary"
+	"github.com/voedger/wazero/internal/wasm/text"
+	"github.com/voedger/wazero/sys"
 )
 
 // Runtime allows embedding of WebAssembly 1.0 (20191205) modules.

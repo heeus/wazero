@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/heeus/wazero/internal/leb128"
+	"github.com/voedger/wazero/internal/leb128"
 )
 
 // Table describes the limits of (function) elements in a table.

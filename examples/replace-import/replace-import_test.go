@@ -3,8 +3,8 @@ package replace_import
 import (
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/maintester"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/testing/maintester"
+	"github.com/voedger/wazero/internal/testing/require"
 )
 
 // Test_main ensures the following will work:

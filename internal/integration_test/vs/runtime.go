@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/wasi"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/wasi"
 )
 
 type RuntimeConfig struct {

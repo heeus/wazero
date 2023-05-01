@@ -74,7 +74,7 @@ format:
 	    awk '/^import \($$/,/^\)$$/{if($$0=="")next}{print}' $$f > /tmp/fmt; \
 	    mv /tmp/fmt $$f; \
 	done
-	@go run $(goimports) -w -local github.com/heeus/wazero `find . -name '*.go'`
+	@go run $(goimports) -w -local github.com/voedger/wazero `find . -name '*.go'`
 
 .PHONY: check
 check:

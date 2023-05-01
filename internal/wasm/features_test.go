@@ -3,7 +3,7 @@ package wasm
 import (
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/testing/require"
 )
 
 // TestFeatures_ZeroIsInvalid reminds maintainers that a bitset cannot use zero as a flag!

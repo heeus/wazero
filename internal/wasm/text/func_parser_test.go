@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/wasm"
 )
 
 func TestFuncParser(t *testing.T) {

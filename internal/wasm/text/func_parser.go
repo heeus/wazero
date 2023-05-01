@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/leb128"
-	"github.com/heeus/wazero/internal/u64"
-	"github.com/heeus/wazero/internal/wasm"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/internal/leb128"
+	"github.com/voedger/wazero/internal/u64"
+	"github.com/voedger/wazero/internal/wasm"
 )
 
 func newFuncParser(enabledFeatures wasm.Features, typeUseParser *typeUseParser, funcNamespace *indexNamespace, onFunc onFunc) *funcParser {

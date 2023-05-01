@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/internal/wasm"
-	"github.com/heeus/wazero/internal/wazeroir"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/wasm"
+	"github.com/voedger/wazero/internal/wazeroir"
 )
 
 func TestInterpreter_Call_WithContextTimeout(t *testing.T) {

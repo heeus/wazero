@@ -4,11 +4,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/testing/hammer"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/sys"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/internal/testing/hammer"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/sys"
 )
 
 var hammers = map[string]func(t *testing.T, r wazero.Runtime){

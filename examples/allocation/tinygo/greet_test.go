@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/heeus/wazero"
-	"github.com/heeus/wazero/internal/testing/maintester"
-	"github.com/heeus/wazero/internal/testing/require"
-	"github.com/heeus/wazero/wasi"
+	"github.com/voedger/wazero"
+	"github.com/voedger/wazero/internal/testing/maintester"
+	"github.com/voedger/wazero/internal/testing/require"
+	"github.com/voedger/wazero/wasi"
 )
 
 // Test_main ensures the following will work:

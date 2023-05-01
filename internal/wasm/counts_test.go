@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/heeus/wazero/api"
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/voedger/wazero/api"
+	"github.com/voedger/wazero/internal/testing/require"
 )
 
 func TestModule_ImportFuncCount(t *testing.T) {

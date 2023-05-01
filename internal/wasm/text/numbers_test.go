@@ -4,7 +4,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/heeus/wazero/internal/testing/require"
+	"github.com/voedger/wazero/internal/testing/require"
 )
 
 var maxUint32 = uint32(math.MaxUint32)

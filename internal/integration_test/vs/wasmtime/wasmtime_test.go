@@ -5,7 +5,7 @@ package wasmtime
 import (
 	"testing"
 
-	"github.com/heeus/wazero/internal/integration_test/vs"
+	"github.com/voedger/wazero/internal/integration_test/vs"
 )
 
 var runtime = newWasmtimeRuntime
