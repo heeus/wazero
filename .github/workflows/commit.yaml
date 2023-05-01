@@ -2,7 +2,7 @@ name: Test
 on: [push, pull_request]
   
 env:  # Update this prior to requiring a higher minor version in go.mod
-  GO_VERSION: "1.18"  # 1.xx == latest patch of 1.xx
+  GO_VERSION: "1.20"  # 1.xx == latest patch of 1.xx
 
 defaults:
   run:  # use bash for all operating systems unless overridden
