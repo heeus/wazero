@@ -697,12 +697,6 @@ func (me *moduleEngine) CallExArg(ctx context.Context, m *wasm.CallContext, f *w
 	return me.doCall(ctx, m, f, params...)
 }
 
-func (ce *callEngine) reset(depth int) {
-	ce.stack.Reset(depth)
-	ce.frames = ce.frames[:0]
-	ce.opcounter = 0
-}
-
 func (ce *callEngine) callGoFunc(ctx context.Context, callCtx *wasm.CallContext, f *function, params []uint64) (results []uint64) {
 	if len(ce.frames) > 0 {
 		// Use the caller's memory, which might be different from the defining module on an imported function.

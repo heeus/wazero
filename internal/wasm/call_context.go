@@ -245,7 +245,7 @@ func (m *CallContext) NewCallEngine() api.ICallEngine {
 func (m *CallContext) Exports() *[]string {
 	mp := m.module.Exports
 	m.exports = nil
-	for name, _ := range mp {
+	for name := range mp {
 		m.exports = append(m.exports, name)
 	}
 	return &m.exports

@@ -2,9 +2,9 @@ package bench
 
 import (
 	"context"
+	"crypto/rand"
 	_ "embed"
 	"fmt"
-	"math/rand"
 	"testing"
 
 	"github.com/voedger/wazero"
@@ -13,6 +13,7 @@ import (
 )
 
 // caseWasm was compiled from TinyGo testdata/case.go
+//
 //go:embed testdata/case.wasm
 var caseWasm []byte
 
